@@ -80,7 +80,7 @@ public class ArchiveActivity extends BaseActivity implements SavingAdapter.Liste
     }
 
     @Override
-    public void OnClick(int position) {
+    public void onClick(int position) {
         Saving selectedSaving = savingAdapter.getSavingAt(position);
         Intent editIntent = new Intent(this, EditActivity.class);
         editIntent.putExtra(Database.COLUMN_SAVING_ID, selectedSaving.getID());
@@ -88,11 +88,11 @@ public class ArchiveActivity extends BaseActivity implements SavingAdapter.Liste
     }
 
     @Override
-    public void OnOperationClick(SavingOperation operation, int position) {
+    public void onOperationClick(SavingOperation operation, int position) {
         Saving selectedSaving = savingAdapter.getSavingAt(position);
         if (operation.equals(SavingOperation.UNARCHIVE)) viewModel.unarchiveSaving(selectedSaving);
         if (operation.equals(SavingOperation.SHARE)) showShareIntent(selectedSaving.getNotes());
-        if (operation.equals(SavingOperation.DELETE)) showDeleteDialog(selectedSaving.getID());
+        if (operation.equals(SavingOperation.DELETE)) showDeleteDialog(selectedSaving);
         if (operation.equals(SavingOperation.HISTORY)) showHistoryActivity(selectedSaving);
     }
 
@@ -104,14 +104,14 @@ public class ArchiveActivity extends BaseActivity implements SavingAdapter.Liste
         startActivity(Intent.createChooser(sendIntent, null));
     }
 
-    private void showDeleteDialog(String savingID) {
+    private void showDeleteDialog(Saving saving) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.dialog_title_delete_saving)
                 .setIcon(R.drawable.ic_delete_forever)
                 .setMessage(R.string.dialog_message_delete_saving)
                 .setNegativeButton(R.string.dialog_button_cancel, null)
                 .setPositiveButton(R.string.dialog_button_delete, (dialogInterface, i) ->
-                        viewModel.deleteSaving(savingID));
+                        viewModel.deleteSaving(saving));
         builder.create().show();
     }
 
