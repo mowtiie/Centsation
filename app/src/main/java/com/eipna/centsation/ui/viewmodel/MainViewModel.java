@@ -11,6 +11,7 @@ import com.eipna.centsation.data.saving.Saving;
 import com.eipna.centsation.data.saving.SavingRepository;
 import com.eipna.centsation.data.saving.SavingSort;
 import com.eipna.centsation.data.transaction.TransactionType;
+import com.eipna.centsation.util.AlarmUtil;
 import com.eipna.centsation.util.PreferenceUtil;
 
 import java.util.ArrayList;
@@ -100,15 +101,16 @@ public class MainViewModel extends AndroidViewModel {
         return null;
     }
 
-    public void deleteSaving(String savingID) {
+    public void deleteSaving(Saving saving) {
         executor.execute(() -> {
-            savingRepository.delete(savingID);
+            AlarmUtil.cancel(getApplication(), saving);
+            savingRepository.delete(saving.getID());
             loadSavingsBlocking();
         });
     }
 
     public void archiveSaving(Saving saving) {
-        Saving archived = copyOf(saving);
+        Saving archived = new Saving(saving);
         archived.setIsArchived(Saving.IS_ARCHIVE);
         executor.execute(() -> {
             savingRepository.edit(archived);
@@ -117,9 +119,8 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void deposit(Saving saving, double amount) {
-        double newBalance = saving.getCurrentSaving() + amount;
-        Saving updated = copyOf(saving);
-        updated.setCurrentSaving(newBalance);
+        Saving updated = new Saving(saving);
+        updated.setCurrentSaving(saving.getCurrentSaving() + amount);
         executor.execute(() -> {
             savingRepository.makeTransaction(updated, amount, TransactionType.DEPOSIT);
             loadSavingsBlocking();
@@ -129,25 +130,13 @@ public class MainViewModel extends AndroidViewModel {
     public boolean withdraw(Saving saving, double amount) {
         double newBalance = saving.getCurrentSaving() - amount;
         if (newBalance < 0) return false;
-        Saving updated = copyOf(saving);
+        Saving updated = new Saving(saving);
         updated.setCurrentSaving(newBalance);
         executor.execute(() -> {
             savingRepository.makeTransaction(updated, amount, TransactionType.WITHDRAW);
             loadSavingsBlocking();
         });
         return true;
-    }
-
-    private Saving copyOf(Saving source) {
-        Saving copy = new Saving();
-        copy.setID(source.getID());
-        copy.setName(source.getName());
-        copy.setCurrentSaving(source.getCurrentSaving());
-        copy.setGoal(source.getGoal());
-        copy.setNotes(source.getNotes());
-        copy.setIsArchived(source.getIsArchived());
-        copy.setDeadline(source.getDeadline());
-        return copy;
     }
 
     @Override
