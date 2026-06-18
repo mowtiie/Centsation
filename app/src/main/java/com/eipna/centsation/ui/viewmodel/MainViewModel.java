@@ -2,6 +2,7 @@ package com.eipna.centsation.ui.viewmodel;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -12,21 +13,23 @@ import com.eipna.centsation.data.saving.SavingSort;
 import com.eipna.centsation.data.transaction.TransactionType;
 import com.eipna.centsation.util.PreferenceUtil;
 
-import org.jspecify.annotations.NonNull;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainViewModel extends AndroidViewModel {
 
     private final SavingRepository savingRepository;
     private final PreferenceUtil preferences;
 
-    private final MutableLiveData<List<Saving>> savingsLiveData = new MutableLiveData<>(new ArrayList<>());
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private String sortCriteria;
-    private boolean isSortAscending;
+    private final MutableLiveData<List<Saving>> savingsLiveData = new MutableLiveData<>();
+
+    private volatile String sortCriteria;
+    private volatile boolean isSortAscending;
 
     public MainViewModel(@NonNull Application application) {
         super(application);
@@ -49,29 +52,37 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void loadSavings() {
+        executor.execute(this::loadSavingsBlocking);
+    }
+
+    private void loadSavingsBlocking() {
         List<Saving> list = savingRepository.getSavings(Saving.NOT_ARCHIVE);
         sortInPlace(list);
-        savingsLiveData.setValue(list);
+        savingsLiveData.postValue(list);
     }
 
     public void setSortCriteria(String criteria) {
         this.sortCriteria = criteria;
-        preferences.setSortCriteria(criteria);
-        applySort();
+        executor.execute(() -> {
+            preferences.setSortCriteria(criteria);
+            resortCurrentList();
+        });
     }
 
     public void setSortAscending(boolean ascending) {
         this.isSortAscending = ascending;
-        preferences.setSortOrder(ascending);
-        applySort();
+        executor.execute(() -> {
+            preferences.setSortOrder(ascending);
+            resortCurrentList();
+        });
     }
 
-    private void applySort() {
+    private void resortCurrentList() {
         List<Saving> current = savingsLiveData.getValue();
         if (current == null) return;
         List<Saving> sorted = new ArrayList<>(current);
         sortInPlace(sorted);
-        savingsLiveData.setValue(sorted);
+        savingsLiveData.postValue(sorted);
     }
 
     private void sortInPlace(List<Saving> list) {
@@ -82,42 +93,51 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     private Comparator<Saving> comparatorFor(String criteria) {
-        if (SavingSort.NAME.SORT.equals(criteria)) {
-            return Saving.SORT_NAME;
-        } else if (SavingSort.VALUE.SORT.equals(criteria)) {
-            return Saving.SORT_VALUE;
-        } else if (SavingSort.GOAL.SORT.equals(criteria)) {
-            return Saving.SORT_GOAL;
-        } else if (SavingSort.DEADLINE.SORT.equals(criteria)) {
-            return Saving.SORT_DEADLINE;
-        }
+        if (SavingSort.NAME.SORT.equals(criteria)) return Saving.SORT_NAME;
+        if (SavingSort.VALUE.SORT.equals(criteria)) return Saving.SORT_VALUE;
+        if (SavingSort.GOAL.SORT.equals(criteria)) return Saving.SORT_GOAL;
+        if (SavingSort.DEADLINE.SORT.equals(criteria)) return Saving.SORT_DEADLINE;
         return null;
     }
 
     public void deleteSaving(String savingID) {
-        savingRepository.delete(savingID);
-        loadSavings();
+        executor.execute(() -> {
+            savingRepository.delete(savingID);
+            loadSavingsBlocking();
+        });
     }
 
     public void archiveSaving(Saving saving) {
-        saving.setIsArchived(Saving.IS_ARCHIVE);
-        savingRepository.edit(saving);
-        loadSavings();
+        executor.execute(() -> {
+            saving.setIsArchived(Saving.IS_ARCHIVE);
+            savingRepository.edit(saving);
+            loadSavingsBlocking();
+        });
     }
 
     public void deposit(Saving saving, double amount) {
-        saving.setCurrentSaving(saving.getCurrentSaving() + amount);
-        savingRepository.makeTransaction(saving, amount, TransactionType.DEPOSIT);
-        loadSavings();
+        double newBalance = saving.getCurrentSaving() + amount;
+        executor.execute(() -> {
+            saving.setCurrentSaving(newBalance);
+            savingRepository.makeTransaction(saving, amount, TransactionType.DEPOSIT);
+            loadSavingsBlocking();
+        });
     }
 
     public boolean withdraw(Saving saving, double amount) {
         double newBalance = saving.getCurrentSaving() - amount;
         if (newBalance < 0) return false;
-        saving.setCurrentSaving(newBalance);
-        savingRepository.makeTransaction(saving, amount, TransactionType.WITHDRAW);
-        loadSavings();
+        executor.execute(() -> {
+            saving.setCurrentSaving(newBalance);
+            savingRepository.makeTransaction(saving, amount, TransactionType.WITHDRAW);
+            loadSavingsBlocking();
+        });
         return true;
     }
-}
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        executor.shutdown();
+    }
+}
