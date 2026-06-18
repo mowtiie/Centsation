@@ -1,6 +1,5 @@
 package com.eipna.centsation.ui.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -35,7 +34,6 @@ import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -44,7 +42,6 @@ public class MainActivity extends BaseActivity implements SavingAdapter.Listener
     private ActivityMainBinding binding;
     private MainViewModel viewModel;
     private SavingAdapter savingAdapter;
-    private final ArrayList<Saving> savings = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,13 +61,14 @@ public class MainActivity extends BaseActivity implements SavingAdapter.Listener
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
-        savingAdapter = new SavingAdapter(this, this, savings);
+        savingAdapter = new SavingAdapter(this, this);
         binding.savingList.setLayoutManager(new LinearLayoutManager(this));
         binding.savingList.setAdapter(savingAdapter);
 
         viewModel.getSavings().observe(this, this::onSavingsChanged);
 
-        binding.createSaving.setOnClickListener(v -> startActivity(new Intent(this, CreateActivity.class)));
+        binding.createSaving.setOnClickListener(v ->
+                startActivity(new Intent(this, CreateActivity.class)));
     }
 
     @Override
@@ -85,13 +83,10 @@ public class MainActivity extends BaseActivity implements SavingAdapter.Listener
         binding = null;
     }
 
-    @SuppressLint("NotifyDataSetChanged")
     private void onSavingsChanged(List<Saving> updated) {
-        savings.clear();
-        savings.addAll(updated);
-        savingAdapter.notifyDataSetChanged();
+        savingAdapter.submitList(updated);
 
-        boolean empty = savings.isEmpty();
+        boolean empty = updated.isEmpty();
         binding.emptyIndicator.setVisibility(empty ? View.VISIBLE : View.GONE);
         binding.savingList.setVisibility(empty ? View.GONE : View.VISIBLE);
     }
@@ -165,7 +160,7 @@ public class MainActivity extends BaseActivity implements SavingAdapter.Listener
 
     @Override
     public void OnClick(int position) {
-        Saving selectedSaving = savings.get(position);
+        Saving selectedSaving = savingAdapter.getSavingAt(position);
         Intent editIntent = new Intent(this, EditActivity.class);
         editIntent.putExtra(Database.COLUMN_SAVING_ID, selectedSaving.getID());
         startActivity(editIntent);
@@ -173,7 +168,7 @@ public class MainActivity extends BaseActivity implements SavingAdapter.Listener
 
     @Override
     public void OnOperationClick(SavingOperation operation, int position) {
-        Saving selectedSaving = savings.get(position);
+        Saving selectedSaving = savingAdapter.getSavingAt(position);
         if (operation.equals(SavingOperation.DELETE)) showDeleteDialog(selectedSaving);
         if (operation.equals(SavingOperation.SHARE)) showShareIntent(selectedSaving.getNotes());
         if (operation.equals(SavingOperation.TRANSACTION)) showTransactionDialog(selectedSaving);
