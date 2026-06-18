@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eipna.centsation.R;
@@ -25,19 +27,18 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import com.google.android.material.textview.MaterialTextView;
 
-import java.util.ArrayList;
+import java.util.Objects;
 
-public class SavingAdapter extends RecyclerView.Adapter<SavingAdapter.ViewHolder> {
+public class SavingAdapter extends ListAdapter<Saving, SavingAdapter.ViewHolder> {
 
     private final Context context;
     private final Listener listener;
     private final PreferenceUtil preferences;
-    private final ArrayList<Saving> savings;
 
-    public SavingAdapter(Context context, Listener listener, ArrayList<Saving> savings) {
+    public SavingAdapter(Context context, Listener listener) {
+        super(DIFF_CALLBACK);
         this.context = context;
         this.listener = listener;
-        this.savings = savings;
         this.preferences = new PreferenceUtil(context);
     }
 
@@ -45,6 +46,27 @@ public class SavingAdapter extends RecyclerView.Adapter<SavingAdapter.ViewHolder
         void OnClick(int position);
         void OnOperationClick(SavingOperation operation, int position);
     }
+
+    public Saving getSavingAt(int position) {
+        return getItem(position);
+    }
+
+    private static final DiffUtil.ItemCallback<Saving> DIFF_CALLBACK = new DiffUtil.ItemCallback<Saving>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Saving oldItem, @NonNull Saving newItem) {
+            return Objects.equals(oldItem.getID(), newItem.getID());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Saving oldItem, @NonNull Saving newItem) {
+            return Objects.equals(oldItem.getName(), newItem.getName())
+                    && oldItem.getCurrentSaving() == newItem.getCurrentSaving()
+                    && oldItem.getGoal() == newItem.getGoal()
+                    && Objects.equals(oldItem.getNotes(), newItem.getNotes())
+                    && oldItem.getDeadline() == newItem.getDeadline()
+                    && oldItem.getIsArchived() == newItem.getIsArchived();
+        }
+    };
 
     @NonNull
     @Override
@@ -55,21 +77,28 @@ public class SavingAdapter extends RecyclerView.Adapter<SavingAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Saving currentSaving = savings.get(position);
+        Saving currentSaving = getItem(position);
         holder.bind(currentSaving, preferences);
 
-        holder.itemView.setOnClickListener(view -> listener.OnClick(position));
-        holder.delete.setOnClickListener(view -> listener.OnOperationClick(SavingOperation.DELETE, position));
-        holder.share.setOnClickListener(view -> listener.OnOperationClick(SavingOperation.SHARE, position));
-        holder.update.setOnClickListener(view -> listener.OnOperationClick(SavingOperation.TRANSACTION, position));
-        holder.archive.setOnClickListener(view -> listener.OnOperationClick(SavingOperation.ARCHIVE, position));
-        holder.unarchive.setOnClickListener(view -> listener.OnOperationClick(SavingOperation.UNARCHIVE, position));
-        holder.history.setOnClickListener(view -> listener.OnOperationClick(SavingOperation.HISTORY, position));
+        holder.itemView.setOnClickListener(view -> dispatchClick(holder));
+        holder.delete.setOnClickListener(view -> dispatchOperation(holder, SavingOperation.DELETE));
+        holder.share.setOnClickListener(view -> dispatchOperation(holder, SavingOperation.SHARE));
+        holder.update.setOnClickListener(view -> dispatchOperation(holder, SavingOperation.TRANSACTION));
+        holder.archive.setOnClickListener(view -> dispatchOperation(holder, SavingOperation.ARCHIVE));
+        holder.unarchive.setOnClickListener(view -> dispatchOperation(holder, SavingOperation.UNARCHIVE));
+        holder.history.setOnClickListener(view -> dispatchOperation(holder, SavingOperation.HISTORY));
     }
 
-    @Override
-    public int getItemCount() {
-        return savings.size();
+    private void dispatchClick(ViewHolder holder) {
+        int pos = holder.getBindingAdapterPosition();
+        if (pos == RecyclerView.NO_POSITION) return;
+        listener.OnClick(pos);
+    }
+
+    private void dispatchOperation(ViewHolder holder, SavingOperation operation) {
+        int pos = holder.getBindingAdapterPosition();
+        if (pos == RecyclerView.NO_POSITION) return;
+        listener.OnOperationClick(operation, pos);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
