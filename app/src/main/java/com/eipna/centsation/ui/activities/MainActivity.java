@@ -2,6 +2,7 @@ package com.eipna.centsation.ui.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,6 +31,7 @@ import com.eipna.centsation.ui.viewmodel.MainViewModel;
 import com.eipna.centsation.util.AlarmUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.radiobutton.MaterialRadioButton;
+import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -56,6 +58,9 @@ public class MainActivity extends BaseActivity implements SavingAdapter.Listener
             v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        Drawable appBarDrawable = MaterialShapeDrawable.createWithElevationOverlay(this);
+        binding.appBar.setStatusBarForeground(appBarDrawable);
 
         viewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
