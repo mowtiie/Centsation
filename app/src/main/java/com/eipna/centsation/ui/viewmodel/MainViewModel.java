@@ -108,18 +108,20 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     public void archiveSaving(Saving saving) {
+        Saving archived = copyOf(saving);
+        archived.setIsArchived(Saving.IS_ARCHIVE);
         executor.execute(() -> {
-            saving.setIsArchived(Saving.IS_ARCHIVE);
-            savingRepository.edit(saving);
+            savingRepository.edit(archived);
             loadSavingsBlocking();
         });
     }
 
     public void deposit(Saving saving, double amount) {
         double newBalance = saving.getCurrentSaving() + amount;
+        Saving updated = copyOf(saving);
+        updated.setCurrentSaving(newBalance);
         executor.execute(() -> {
-            saving.setCurrentSaving(newBalance);
-            savingRepository.makeTransaction(saving, amount, TransactionType.DEPOSIT);
+            savingRepository.makeTransaction(updated, amount, TransactionType.DEPOSIT);
             loadSavingsBlocking();
         });
     }
@@ -127,12 +129,25 @@ public class MainViewModel extends AndroidViewModel {
     public boolean withdraw(Saving saving, double amount) {
         double newBalance = saving.getCurrentSaving() - amount;
         if (newBalance < 0) return false;
+        Saving updated = copyOf(saving);
+        updated.setCurrentSaving(newBalance);
         executor.execute(() -> {
-            saving.setCurrentSaving(newBalance);
-            savingRepository.makeTransaction(saving, amount, TransactionType.WITHDRAW);
+            savingRepository.makeTransaction(updated, amount, TransactionType.WITHDRAW);
             loadSavingsBlocking();
         });
         return true;
+    }
+
+    private Saving copyOf(Saving source) {
+        Saving copy = new Saving();
+        copy.setID(source.getID());
+        copy.setName(source.getName());
+        copy.setCurrentSaving(source.getCurrentSaving());
+        copy.setGoal(source.getGoal());
+        copy.setNotes(source.getNotes());
+        copy.setIsArchived(source.getIsArchived());
+        copy.setDeadline(source.getDeadline());
+        return copy;
     }
 
     @Override
