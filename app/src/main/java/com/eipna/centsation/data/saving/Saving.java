@@ -26,6 +26,16 @@ public class Saving {
         this.deadline = 0;
     }
 
+    public Saving(Saving other) {
+        this.ID = other.ID;
+        this.name = other.name;
+        this.currentSaving = other.currentSaving;
+        this.goal = other.goal;
+        this.notes = other.notes;
+        this.isArchived = other.isArchived;
+        this.deadline = other.deadline;
+    }
+
     public static final Comparator<Saving> SORT_NAME = Comparator.comparing(firstSaving -> firstSaving.getName().toLowerCase());
 
     public static final Comparator<Saving> SORT_VALUE = Comparator.comparingDouble(Saving::getCurrentSaving);
