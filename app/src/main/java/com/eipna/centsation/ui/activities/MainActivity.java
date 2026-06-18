@@ -27,7 +27,6 @@ import com.eipna.centsation.data.saving.SavingSort;
 import com.eipna.centsation.databinding.ActivityMainBinding;
 import com.eipna.centsation.ui.adapters.SavingAdapter;
 import com.eipna.centsation.ui.viewmodel.MainViewModel;
-import com.eipna.centsation.util.AlarmUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.shape.MaterialShapeDrawable;
@@ -159,7 +158,7 @@ public class MainActivity extends BaseActivity implements SavingAdapter.Listener
     }
 
     @Override
-    public void OnClick(int position) {
+    public void onClick(int position) {
         Saving selectedSaving = savingAdapter.getSavingAt(position);
         Intent editIntent = new Intent(this, EditActivity.class);
         editIntent.putExtra(Database.COLUMN_SAVING_ID, selectedSaving.getID());
@@ -167,7 +166,7 @@ public class MainActivity extends BaseActivity implements SavingAdapter.Listener
     }
 
     @Override
-    public void OnOperationClick(SavingOperation operation, int position) {
+    public void onOperationClick(SavingOperation operation, int position) {
         Saving selectedSaving = savingAdapter.getSavingAt(position);
         if (operation.equals(SavingOperation.DELETE)) showDeleteDialog(selectedSaving);
         if (operation.equals(SavingOperation.SHARE)) showShareIntent(selectedSaving.getNotes());
@@ -182,10 +181,8 @@ public class MainActivity extends BaseActivity implements SavingAdapter.Listener
                 .setIcon(R.drawable.ic_delete_forever)
                 .setMessage(R.string.dialog_message_delete_saving)
                 .setNegativeButton(R.string.dialog_button_cancel, null)
-                .setPositiveButton(R.string.dialog_button_delete, (dialogInterface, i) -> {
-                    AlarmUtil.cancel(this, saving);
-                    viewModel.deleteSaving(saving.getID());
-                });
+                .setPositiveButton(R.string.dialog_button_delete, (dialogInterface, i) ->
+                        viewModel.deleteSaving(saving));
         builder.create().show();
     }
 
@@ -227,7 +224,13 @@ public class MainActivity extends BaseActivity implements SavingAdapter.Listener
                         return;
                     }
 
-                    double amount = Double.parseDouble(amountText);
+                    double amount;
+                    try {
+                        amount = Double.parseDouble(amountText);
+                    } catch (NumberFormatException e) {
+                        amountLayout.setError(getString(R.string.field_error_invalid_number));
+                        return;
+                    }
 
                     if (depositOption.isChecked()) {
                         viewModel.deposit(selectedSaving, amount);
