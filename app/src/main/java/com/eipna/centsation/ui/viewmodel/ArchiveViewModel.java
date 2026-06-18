@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.eipna.centsation.data.saving.Saving;
 import com.eipna.centsation.data.saving.SavingRepository;
+import com.eipna.centsation.util.AlarmUtil;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -37,32 +38,21 @@ public class ArchiveViewModel extends AndroidViewModel {
         savingsLiveData.postValue(savingRepository.getSavings(Saving.IS_ARCHIVE));
     }
 
-    public void deleteSaving(String savingID) {
+    public void deleteSaving(Saving saving) {
         executor.execute(() -> {
-            savingRepository.delete(savingID);
+            AlarmUtil.cancel(getApplication(), saving);
+            savingRepository.delete(saving.getID());
             loadSavingsBlocking();
         });
     }
 
     public void unarchiveSaving(Saving saving) {
-        Saving unarchived = copyOf(saving);
+        Saving unarchived = new Saving(saving);
         unarchived.setIsArchived(Saving.NOT_ARCHIVE);
         executor.execute(() -> {
             savingRepository.edit(unarchived);
             loadSavingsBlocking();
         });
-    }
-
-    private Saving copyOf(Saving source) {
-        Saving copy = new Saving();
-        copy.setID(source.getID());
-        copy.setName(source.getName());
-        copy.setCurrentSaving(source.getCurrentSaving());
-        copy.setGoal(source.getGoal());
-        copy.setNotes(source.getNotes());
-        copy.setIsArchived(source.getIsArchived());
-        copy.setDeadline(source.getDeadline());
-        return copy;
     }
 
     @Override
