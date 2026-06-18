@@ -43,8 +43,8 @@ public class SavingAdapter extends ListAdapter<Saving, SavingAdapter.ViewHolder>
     }
 
     public interface Listener {
-        void OnClick(int position);
-        void OnOperationClick(SavingOperation operation, int position);
+        void onClick(int position);
+        void onOperationClick(SavingOperation operation, int position);
     }
 
     public Saving getSavingAt(int position) {
@@ -92,13 +92,13 @@ public class SavingAdapter extends ListAdapter<Saving, SavingAdapter.ViewHolder>
     private void dispatchClick(ViewHolder holder) {
         int pos = holder.getBindingAdapterPosition();
         if (pos == RecyclerView.NO_POSITION) return;
-        listener.OnClick(pos);
+        listener.onClick(pos);
     }
 
     private void dispatchOperation(ViewHolder holder, SavingOperation operation) {
         int pos = holder.getBindingAdapterPosition();
         if (pos == RecyclerView.NO_POSITION) return;
-        listener.OnOperationClick(operation, pos);
+        listener.onOperationClick(operation, pos);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -157,7 +157,8 @@ public class SavingAdapter extends ListAdapter<Saving, SavingAdapter.ViewHolder>
                 name.setText(currentSaving.getName());
             }
 
-            share.setVisibility(currentSaving.getNotes().isEmpty() ? View.GONE : View.VISIBLE);
+            String notes = currentSaving.getNotes();
+            share.setVisibility((notes == null || notes.isEmpty()) ? View.GONE : View.VISIBLE);
 
             deadline.setVisibility(currentSaving.getDeadline() == AlarmUtil.NO_ALARM ? View.GONE : View.VISIBLE);
             deadline.setText(String.format("Deadline: %s", DateUtil.getStringDate(currentSaving.getDeadline(), deadlineFormat)));
