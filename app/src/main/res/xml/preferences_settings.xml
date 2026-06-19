@@ -7,13 +7,21 @@
 
         <ListPreference
             android:key="theme"
-            app:iconSpaceReserved="false"
-            android:title="@string/preference_list_theme"/>
+            android:title="@string/preference_list_theme"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_entry_values"
+            android:defaultValue="System Default"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
 
         <ListPreference
             android:key="contrast"
-            app:iconSpaceReserved="false"
-            android:title="@string/preference_list_contrast"/>
+            android:title="@string/preference_list_contrast"
+            android:entries="@array/contrast_entries"
+            android:entryValues="@array/contrast_entry_values"
+            android:defaultValue="contrast_low"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
 
         <SwitchPreferenceCompat
             android:key="dynamic_colors"
@@ -29,13 +37,19 @@
 
         <ListPreference
             android:key="currency"
-            app:iconSpaceReserved="false"
-            android:title="@string/preference_list_currency"/>
+            android:title="@string/preference_list_currency"
+            android:defaultValue="PHP"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
 
         <ListPreference
             android:key="deadline_format"
-            app:iconSpaceReserved="false"
-            android:title="@string/preference_list_deadline_format"/>
+            android:title="@string/preference_list_deadline_format"
+            android:entries="@array/deadline_format_entries"
+            android:entryValues="@array/deadline_format_entry_values"
+            android:defaultValue="MM/dd/yyyy"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -43,11 +57,11 @@
         app:iconSpaceReserved="false">
 
         <SwitchPreferenceCompat
-            app:iconSpaceReserved="false"
             android:key="screen_privacy"
             android:title="@string/preference_switch_screen_privacy_title"
             android:summary="@string/preference_switch_screen_privacy_summary"
-            android:widgetLayout="@layout/view_preference_switch"/>
+            android:widgetLayout="@layout/view_preference_switch"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -56,14 +70,14 @@
 
         <Preference
             android:key="import"
-            app:iconSpaceReserved="false"
             android:title="@string/preference_import_title"
-            android:summary="@string/preference_import_summary"/>
+            android:summary="@string/preference_import_summary"
+            app:iconSpaceReserved="false"/>
 
         <Preference
             android:key="export"
-            app:iconSpaceReserved="false"
             android:title="@string/preference_export_title"
-            android:summary="@string/preference_export_summary"/>
+            android:summary="@string/preference_export_summary"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 </PreferenceScreen>
