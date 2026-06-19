@@ -98,31 +98,43 @@ public class CreateActivity extends CentsationActivity {
         String notesText = Objects.requireNonNull(binding.fieldSavingNotesText.getText()).toString();
         String deadlineText = Objects.requireNonNull(binding.fieldSavingDeadlineText.getText()).toString();
 
-        if (!nameText.isEmpty() && !currentSavingText.isEmpty() && !goalText.isEmpty()) {
-            double currentSaving = Double.parseDouble(currentSavingText);
-            double goal = Double.parseDouble(goalText);
-
-            Saving createdSaving = new Saving();
-            createdSaving.setID(UUID.randomUUID().toString());
-            createdSaving.setName(nameText);
-            createdSaving.setCurrentSaving(currentSaving);
-            createdSaving.setGoal(goal);
-            createdSaving.setNotes(notesText);
-            createdSaving.setIsArchived(Saving.NOT_ARCHIVE);
-            createdSaving.setDeadline(selectedDeadline);
-
-            if (!deadlineText.isEmpty()) {
-                AlarmUtil.set(this, createdSaving);
-            }
-
-            savingRepository.create(createdSaving);
-            setResult(RESULT_OK);
-            finish();
-        }
-
         binding.fieldSavingNameLayout.setError(nameText.isEmpty() ? getString(R.string.field_error_required) : null);
         binding.fieldSavingCurrentSavingLayout.setError(currentSavingText.isEmpty() ? getString(R.string.field_error_required) : null);
         binding.fieldSavingGoalLayout.setError(goalText.isEmpty() ? getString(R.string.field_error_required) : null);
+        if (nameText.isEmpty() || currentSavingText.isEmpty() || goalText.isEmpty()) return;
+
+        double currentSaving;
+        try {
+            currentSaving = Double.parseDouble(currentSavingText);
+        } catch (NumberFormatException e) {
+            binding.fieldSavingCurrentSavingLayout.setError(getString(R.string.field_error_invalid_number));
+            return;
+        }
+
+        double goal;
+        try {
+            goal = Double.parseDouble(goalText);
+        } catch (NumberFormatException e) {
+            binding.fieldSavingGoalLayout.setError(getString(R.string.field_error_invalid_number));
+            return;
+        }
+
+        Saving createdSaving = new Saving();
+        createdSaving.setID(UUID.randomUUID().toString());
+        createdSaving.setName(nameText);
+        createdSaving.setCurrentSaving(currentSaving);
+        createdSaving.setGoal(goal);
+        createdSaving.setNotes(notesText);
+        createdSaving.setIsArchived(Saving.NOT_ARCHIVE);
+        createdSaving.setDeadline(selectedDeadline);
+
+        if (!deadlineText.isEmpty()) {
+            AlarmUtil.set(this, createdSaving);
+        }
+
+        savingRepository.create(createdSaving);
+        setResult(RESULT_OK);
+        finish();
     }
 
     private void hasNotificationPermission() {
