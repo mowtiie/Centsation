@@ -5,22 +5,28 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.eipna.centsation.data.Database;
 import com.eipna.centsation.data.transaction.Transaction;
 import com.eipna.centsation.data.transaction.TransactionRepository;
 import com.eipna.centsation.data.transaction.TransactionType;
+import com.eipna.centsation.util.AlarmUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SavingRepository extends Database {
 
     private final TransactionRepository transactionRepository;
 
+    private final Context context;
+
     public SavingRepository(@Nullable Context context) {
         super(context);
-        transactionRepository = new TransactionRepository(context);
+        this.context = context == null ? null : context.getApplicationContext();
+        this.transactionRepository = new TransactionRepository(context);
     }
 
     public void create(Saving createdSaving) {
@@ -149,5 +155,45 @@ public class SavingRepository extends Database {
         cursor.close();
         database.close();
         return null;
+    }
+
+    public void bulkImport(@NonNull List<Saving> savings, @NonNull List<Transaction> transactions) {
+        try (SQLiteDatabase database = getWritableDatabase()) {
+            database.beginTransaction();
+            try {
+                for (Saving saving : savings) {
+                    ContentValues values = new ContentValues();
+                    values.put(COLUMN_SAVING_ID, saving.getID());
+                    values.put(COLUMN_SAVING_NAME, saving.getName());
+                    values.put(COLUMN_SAVING_CURRENT_SAVING, saving.getCurrentSaving());
+                    values.put(COLUMN_SAVING_GOAL, saving.getGoal());
+                    values.put(COLUMN_SAVING_NOTES, saving.getNotes());
+                    values.put(COLUMN_SAVING_IS_ARCHIVED, saving.getIsArchived());
+                    values.put(COLUMN_SAVING_DEADLINE, saving.getDeadline());
+                    database.insert(TABLE_SAVING, null, values);
+                }
+
+                for (Transaction transaction : transactions) {
+                    ContentValues values = new ContentValues();
+                    values.put(COLUMN_TRANSACTION_SAVING_ID, transaction.getSavingID());
+                    values.put(COLUMN_TRANSACTION_AMOUNT, transaction.getAmount());
+                    values.put(COLUMN_TRANSACTION_TYPE, transaction.getType());
+                    values.put(COLUMN_TRANSACTION_DATE, transaction.getDate());
+                    database.insert(TABLE_TRANSACTION, null, values);
+                }
+
+                database.setTransactionSuccessful();
+            } finally {
+                database.endTransaction();
+            }
+        }
+
+        long now = System.currentTimeMillis();
+        for (Saving saving : savings) {
+            long deadline = saving.getDeadline();
+            if (deadline != AlarmUtil.NO_ALARM && deadline > now) {
+                AlarmUtil.set(context, saving);
+            }
+        }
     }
 }
