@@ -33,7 +33,7 @@
     <string name="field_saving_notes">Notes</string>
     <string name="field_saving_deadline">Deadline</string>
 
-    <string name="dialog_title_crash">Centsation crashed last time</string>
+    <string name="dialog_title_crash">App has crashed</string>
     <string name="dialog_title_request_alarm_permission">Required permission</string>
     <string name="dialog_title_create_saving">Create saving</string>
     <string name="dialog_title_edit_saving">Edit saving</string>
@@ -41,7 +41,7 @@
     <string name="dialog_title_create_transaction">Create transaction</string>
     <string name="dialog_title_history_saving">History</string>
 
-    <string name="dialog_message_crash">The app closed unexpectedly. Sharing the crash report helps fix the issue.</string>
+    <string name="dialog_message_crash">The app closed unexpectedly. You can help fix the issue by emailing the error report or saving it as a text file.</string>
     <string name="dialog_message_delete_saving">You are about to delete this saving, this action cannot be undone.</string>
     <string name="dialog_message_request_alarm_permission">Deadlines requires alarms and reminders permission to work properly. Please grant this permission.</string>
 

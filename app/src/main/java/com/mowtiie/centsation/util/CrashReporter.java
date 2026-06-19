@@ -77,6 +77,7 @@ public class CrashReporter {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity)
                 .setTitle(R.string.dialog_title_crash)
                 .setMessage(R.string.dialog_message_crash)
+                .setIcon(R.drawable.ic_crash_error)
                 .setCancelable(false)
                 .setView(crashDialogView);
 
