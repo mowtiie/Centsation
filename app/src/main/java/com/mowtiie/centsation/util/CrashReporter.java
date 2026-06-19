@@ -3,13 +3,18 @@ package com.mowtiie.centsation.util;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.button.MaterialButton;
 import com.mowtiie.centsation.R;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
@@ -56,7 +61,6 @@ public class CrashReporter {
     public static void deleteReport(Context context) {
         File file = getReportFile(context);
         if (file.exists()) {
-            //noinspection ResultOfMethodCallIgnored
             file.delete();
         }
     }
@@ -64,23 +68,41 @@ public class CrashReporter {
     public static void showDialogIfPending(Activity activity, ActivityResultLauncher<Intent> saveLauncher) {
         if (!hasReport(activity)) return;
 
-        new MaterialAlertDialogBuilder(activity)
+        View crashDialogView = LayoutInflater.from(activity).inflate(R.layout.dialog_crash, null, false);
+
+        MaterialButton actionEmail = crashDialogView.findViewById(R.id.crash_action_email);
+        MaterialButton actionSave = crashDialogView.findViewById(R.id.crash_action_save);
+        MaterialButton actionDismiss = crashDialogView.findViewById(R.id.crash_action_dismiss);
+
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity)
                 .setTitle(R.string.dialog_title_crash)
                 .setMessage(R.string.dialog_message_crash)
                 .setCancelable(false)
-                .setPositiveButton(R.string.dialog_button_crash_email, (d, w) -> {
-                    String report = readReport(activity);
-                    if (report == null) return;
-                    if (sendEmail(activity, report)) {
-                        deleteReport(activity);
-                    }
-                })
-                .setNeutralButton(R.string.dialog_button_crash_save, (d, w) -> {
-                    launchSaveDialog(saveLauncher);
-                })
-                .setNegativeButton(R.string.dialog_button_crash_dismiss, (d, w) ->
-                        deleteReport(activity))
-                .show();
+                .setView(crashDialogView);
+
+        AlertDialog dialog = builder.create();
+        dialog.setOnShowListener(dialogInterface -> {
+            actionEmail.setOnClickListener(view -> {
+                String report = readReport(activity);
+                if (report == null) return;
+                if (sendEmail(activity, report)) {
+                    deleteReport(activity);
+                }
+                dialog.dismiss();
+            });
+
+            actionSave.setOnClickListener(view -> {
+                launchSaveDialog(saveLauncher);
+                dialog.dismiss();
+            });
+
+            actionDismiss.setOnClickListener(view -> {
+                deleteReport(activity);
+                dialog.dismiss();
+            });
+        });
+
+        dialog.show();
     }
 
     public static boolean writeReportToUri(Context context, Uri uri) {
