@@ -79,6 +79,9 @@
     <string name="tooltip_unarchive">Unarchive</string>
     <string name="tooltip_delete">Delete</string>
 
+    <string name="progress_exporting">Exporting savings…</string>
+    <string name="progress_importing">Importing savings…</string>
+
     <string name="snack_bar_permission_notifications">Deadlines requires notification permissions to work.</string>
 
     <!-- App Preference Category -->
