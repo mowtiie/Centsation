@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingEnd="24dp"
+    android:paddingStart="24dp"
+    android:paddingTop="16dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/crash_action_email"
+        android:text="@string/dialog_button_crash_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/crash_action_save"
+        android:text="@string/dialog_button_crash_save"
+        android:layout_marginVertical="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/crash_action_dismiss"
+        android:text="@string/dialog_button_crash_dismiss"
+        android:backgroundTint="?attr/colorTertiary"
+        android:textColor="?attr/colorOnTertiary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>
