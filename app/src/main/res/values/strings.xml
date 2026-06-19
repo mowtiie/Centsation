@@ -2,7 +2,7 @@
     <string name="app_name">Centsation</string>
     <string name="app_easter_egg">You\'ve done this before, haven\'t you?</string>
     <string name="app_license">GNU General Public License v3.0</string>
-    <string name="app_author">eipna</string>
+    <string name="app_author">mowtiie</string>
 
     <string name="toolbar_main">Savings</string>
     <string name="toolbar_create">New saving</string>
@@ -12,8 +12,8 @@
     <string name="toolbar_history">History</string>
     <string name="toolbar_about">About</string>
 
-    <string name="link_app_source_code">https://github.com/eipna/Centsation</string>
-    <string name="link_app_author">https://github.com/eipna</string>
+    <string name="link_app_source_code">https://github.com/mowtiie/Centsation</string>
+    <string name="link_app_author">https://github.com/mowtiie</string>
 
     <string name="empty_indicator_main">No savings found</string>
     <string name="empty_indicator_archive">No archived savings</string>
