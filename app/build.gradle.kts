@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.eipna.centsation"
+    namespace = "com.mowtiie.centsation"
     compileSdk = 36
 
     dependenciesInfo {
@@ -24,7 +24,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.eipna.centsation"
+        applicationId = "com.mowtiie.centsation"
         minSdk = 24
         targetSdk = 36
         versionCode = 7
