@@ -2,14 +2,18 @@ package com.mowtiie.centsation.ui.activities;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.graphics.Insets;
@@ -33,6 +37,7 @@ import com.google.android.material.radiobutton.MaterialRadioButton;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.mowtiie.centsation.util.CrashReporter;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +47,26 @@ public class MainActivity extends CentsationActivity implements SavingAdapter.Li
     private ActivityMainBinding binding;
     private MainViewModel viewModel;
     private SavingAdapter savingAdapter;
+
+    private final ActivityResultLauncher<Intent> saveCrashLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() != RESULT_OK || result.getData() == null) {
+                            return;
+                        }
+
+                        Uri uri = result.getData().getData();
+                        if (uri == null) {
+                            return;
+                        }
+
+                        if (CrashReporter.writeReportToUri(this, uri)) {
+                            Toast.makeText(this, R.string.crash_save_toast_success, Toast.LENGTH_SHORT).show();
+                            CrashReporter.deleteReport(this);
+                        } else {
+                            Toast.makeText(this, R.string.crash_save_toast_failure, Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,8 +92,11 @@ public class MainActivity extends CentsationActivity implements SavingAdapter.Li
 
         viewModel.getSavings().observe(this, this::onSavingsChanged);
 
-        binding.createSaving.setOnClickListener(v ->
-                startActivity(new Intent(this, CreateActivity.class)));
+        binding.createSaving.setOnClickListener(v -> startActivity(new Intent(this, CreateActivity.class)));
+
+        if (savedInstanceState == null) {
+            CrashReporter.showDialogIfPending(this, saveCrashLauncher);
+        }
     }
 
     @Override
