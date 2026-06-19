@@ -33,6 +33,7 @@
     <string name="field_saving_notes">Notes</string>
     <string name="field_saving_deadline">Deadline</string>
 
+    <string name="dialog_title_crash">Centsation crashed last time</string>
     <string name="dialog_title_request_alarm_permission">Required permission</string>
     <string name="dialog_title_create_saving">Create saving</string>
     <string name="dialog_title_edit_saving">Edit saving</string>
@@ -40,9 +41,13 @@
     <string name="dialog_title_create_transaction">Create transaction</string>
     <string name="dialog_title_history_saving">History</string>
 
+    <string name="dialog_message_crash">The app closed unexpectedly. Sharing the crash report helps fix the issue.</string>
     <string name="dialog_message_delete_saving">You are about to delete this saving, this action cannot be undone.</string>
     <string name="dialog_message_request_alarm_permission">Deadlines requires alarms and reminders permission to work properly. Please grant this permission.</string>
 
+    <string name="dialog_button_crash_email">Email report</string>
+    <string name="dialog_button_crash_save">Save to file</string>
+    <string name="dialog_button_crash_dismiss">Dismiss</string>
     <string name="dialog_button_grant">Grant</string>
     <string name="dialog_button_cancel">Cancel</string>
     <string name="dialog_button_create">Create</string>
@@ -83,6 +88,14 @@
     <string name="progress_importing">Importing savings…</string>
 
     <string name="snack_bar_permission_notifications">Deadlines requires notification permissions to work.</string>
+
+    <!-- Crash reporting -->
+    <string name="developer_email" translatable="false">your_email@example.com</string>
+    <string name="crash_email_subject">Centsation crash report</string>
+    <string name="crash_email_chooser_title">Send report via…</string>
+    <string name="crash_save_toast_success">Crash report saved</string>
+    <string name="crash_save_toast_failure">Couldn\'t save crash report</string>
+    <string name="crash_no_email_app_toast">No email app installed</string>
 
     <!-- App Preference Category -->
     <string name="preference_category_appearance">Appearance</string>
