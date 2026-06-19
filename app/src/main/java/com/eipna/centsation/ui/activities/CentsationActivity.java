@@ -35,15 +35,24 @@ public abstract class CentsationActivity extends AppCompatActivity {
         NotificationUtil.createChannels(this);
 
         String theme = preferences.getTheme();
-        if (theme.equals(Theme.SYSTEM.VALUE)) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-        if (theme.equals(Theme.BATTERY.VALUE)) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY);
-        if (theme.equals(Theme.LIGHT.VALUE)) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-        if (theme.equals(Theme.DARK.VALUE)) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        if (theme.equals(Theme.SYSTEM.VALUE)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+        } else if (theme.equals(Theme.BATTERY.VALUE)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO_BATTERY);
+        } else if (theme.equals(Theme.LIGHT.VALUE)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        } else if (theme.equals(Theme.DARK.VALUE)) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }
 
         String contrast = preferences.getContrast();
-        if (contrast.equals(Contrast.LOW.VALUE)) setTheme(R.style.Theme_Centsation);
-        if (contrast.equals(Contrast.MEDIUM.VALUE)) setTheme(R.style.Theme_Centsation_MediumContrast);
-        if (contrast.equals(Contrast.HIGH.VALUE)) setTheme(R.style.Theme_Centsation_HighContrast);
+        if (contrast.equals(Contrast.LOW.VALUE)) {
+            setTheme(R.style.Theme_Centsation);
+        } else if (contrast.equals(Contrast.MEDIUM.VALUE)) {
+            setTheme(R.style.Theme_Centsation_MediumContrast);
+        } else if (contrast.equals(Contrast.HIGH.VALUE)) {
+            setTheme(R.style.Theme_Centsation_HighContrast);
+        }
 
         if (preferences.isDynamicColors()) DynamicColors.applyToActivityIfAvailable(this);
     }
