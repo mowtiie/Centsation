@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -195,8 +196,7 @@ public class MainActivity extends CentsationActivity implements SavingAdapter.Li
     }
 
     private void showTransactionDialog(Saving selectedSaving) {
-        View transactionDialogView = LayoutInflater.from(this)
-                .inflate(R.layout.dialog_saving_transaction, null, false);
+        View transactionDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_saving_transaction, null, false);
         String currentCurrencySymbol = Currency.getSymbol(preferences.getCurrency());
 
         TextInputLayout amountLayout = transactionDialogView.findViewById(R.id.field_saving_amount_layout);
@@ -215,34 +215,42 @@ public class MainActivity extends CentsationActivity implements SavingAdapter.Li
                 .setPositiveButton(R.string.dialog_button_submit, null);
 
         AlertDialog dialog = builder.create();
-        dialog.setOnShowListener(dialogInterface ->
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
-                    String amountText = Objects.requireNonNull(amountInput.getText()).toString();
 
-                    if (amountText.isEmpty()) {
-                        amountLayout.setError(getString(R.string.field_error_required));
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+
+        dialog.setOnShowListener(dialogInterface -> {
+            amountInput.requestFocus();
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+                String amountText = Objects.requireNonNull(amountInput.getText()).toString();
+
+                if (amountText.isEmpty()) {
+                    amountLayout.setError(getString(R.string.field_error_required));
+                    return;
+                }
+
+                double amount;
+                try {
+                    amount = Double.parseDouble(amountText);
+                } catch (NumberFormatException e) {
+                    amountLayout.setError(getString(R.string.field_error_invalid_number));
+                    return;
+                }
+
+                if (depositOption.isChecked()) {
+                    viewModel.deposit(selectedSaving, amount);
+                    dialog.dismiss();
+                } else if (withdrawOption.isChecked()) {
+                    if (!viewModel.withdraw(selectedSaving, amount)) {
+                        amountLayout.setError(getString(R.string.field_error_negative_saving));
                         return;
                     }
-
-                    double amount;
-                    try {
-                        amount = Double.parseDouble(amountText);
-                    } catch (NumberFormatException e) {
-                        amountLayout.setError(getString(R.string.field_error_invalid_number));
-                        return;
-                    }
-
-                    if (depositOption.isChecked()) {
-                        viewModel.deposit(selectedSaving, amount);
-                        dialog.dismiss();
-                    } else if (withdrawOption.isChecked()) {
-                        if (!viewModel.withdraw(selectedSaving, amount)) {
-                            amountLayout.setError(getString(R.string.field_error_negative_saving));
-                            return;
-                        }
-                        dialog.dismiss();
-                    }
-                }));
+                    dialog.dismiss();
+                }
+            });
+        });
         dialog.show();
     }
 
