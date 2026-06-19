@@ -153,32 +153,39 @@ public class EditActivity extends CentsationActivity {
         String notesText = Objects.requireNonNull(binding.fieldSavingNotesText.getText()).toString();
         String deadlineText = Objects.requireNonNull(binding.fieldSavingDeadlineText.getText()).toString();
 
-        if (!nameText.isEmpty() && !goalText.isEmpty()) {
-            double goal = Double.parseDouble(goalText);
+        binding.fieldSavingNameLayout.setError(
+                nameText.isEmpty() ? getString(R.string.field_error_required) : null);
+        binding.fieldSavingGoalLayout.setError(
+                goalText.isEmpty() ? getString(R.string.field_error_required) : null);
+        if (nameText.isEmpty() || goalText.isEmpty()) return;
 
-            Saving editedSaving = new Saving();
-            editedSaving.setID(currentSaving.getID());
-            editedSaving.setName(nameText);
-            editedSaving.setCurrentSaving(currentSaving.getCurrentSaving());
-            editedSaving.setGoal(goal);
-            editedSaving.setNotes(notesText);
-            editedSaving.setIsArchived(currentSaving.getIsArchived());
-            editedSaving.setDeadline(currentSaving.getDeadline());
-
-            if (deadlineText.isEmpty()) {
-                AlarmUtil.cancel(this, editedSaving);
-                editedSaving.setDeadline(AlarmUtil.NO_ALARM);
-            } else {
-                AlarmUtil.set(this, editedSaving);
-            }
-
-            savingRepository.edit(editedSaving);
-            setResult(RESULT_OK);
-            finish();
+        double goal;
+        try {
+            goal = Double.parseDouble(goalText);
+        } catch (NumberFormatException e) {
+            binding.fieldSavingGoalLayout.setError(getString(R.string.field_error_invalid_number));
+            return;
         }
 
-        binding.fieldSavingNameLayout.setError(nameText.isEmpty() ? getString(R.string.field_error_required) : null);
-        binding.fieldSavingGoalLayout.setError(goalText.isEmpty() ? getString(R.string.field_error_required) : null);
+        Saving editedSaving = new Saving();
+        editedSaving.setID(currentSaving.getID());
+        editedSaving.setName(nameText);
+        editedSaving.setCurrentSaving(currentSaving.getCurrentSaving());
+        editedSaving.setGoal(goal);
+        editedSaving.setNotes(notesText);
+        editedSaving.setIsArchived(currentSaving.getIsArchived());
+        editedSaving.setDeadline(currentSaving.getDeadline());
+
+        if (deadlineText.isEmpty()) {
+            AlarmUtil.cancel(this, editedSaving);
+            editedSaving.setDeadline(AlarmUtil.NO_ALARM);
+        } else {
+            AlarmUtil.set(this, editedSaving);
+        }
+
+        savingRepository.edit(editedSaving);
+        setResult(RESULT_OK);
+        finish();
     }
 
     @Override
