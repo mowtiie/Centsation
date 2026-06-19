@@ -1,9 +1,7 @@
 package com.eipna.centsation.ui.activities;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,11 +34,11 @@ import com.eipna.centsation.data.saving.SavingRepository;
 import com.eipna.centsation.data.transaction.Transaction;
 import com.eipna.centsation.data.transaction.TransactionRepository;
 import com.eipna.centsation.databinding.ActivitySettingsBinding;
-import com.eipna.centsation.util.AlarmUtil;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -49,6 +47,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -93,7 +92,6 @@ public class SettingsActivity extends BaseActivity {
         private static final String TAG_IMPORT = "SettingsImport";
 
         private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
         private AlertDialog progressDialog;
 
         private ListPreference listContrast;
@@ -313,6 +311,7 @@ public class SettingsActivity extends BaseActivity {
                     Log.e(TAG_IMPORT, "openInputStream returned null for " + uri);
                     return false;
                 }
+
                 BufferedReader reader = new BufferedReader(new InputStreamReader(rawStream, StandardCharsets.UTF_8));
                 StringBuilder jsonBuilder = new StringBuilder();
                 String line;
@@ -325,59 +324,48 @@ public class SettingsActivity extends BaseActivity {
                 return false;
             }
 
-            try (Database database = new Database(context)) {
-                SQLiteDatabase writableDatabase = database.getWritableDatabase();
-
+            try (SavingRepository savingRepo = new SavingRepository(context)) {
                 JSONObject jsonImport = new JSONObject(jsonContent);
-                JSONArray savingJsonArray = jsonImport.getJSONArray(Database.TABLE_SAVING);
-                JSONArray transactionJsonArray = jsonImport.getJSONArray(Database.TABLE_TRANSACTION);
+                List<Saving> savings = parseSavings(jsonImport.getJSONArray(Database.TABLE_SAVING));
+                List<Transaction> transactions = parseTransactions(jsonImport.getJSONArray(Database.TABLE_TRANSACTION));
 
-                writableDatabase.beginTransaction();
-                try {
-                    long now = System.currentTimeMillis();
-
-                    for (int i = 0; i < savingJsonArray.length(); i++) {
-                        JSONObject savingObject = savingJsonArray.getJSONObject(i);
-                        long savingDeadline = savingObject.getLong(Database.COLUMN_SAVING_DEADLINE);
-
-                        if (savingDeadline != AlarmUtil.NO_ALARM && savingDeadline > now) {
-                            Saving rescheduledSaving = new Saving();
-                            rescheduledSaving.setID(savingObject.getString(Database.COLUMN_SAVING_ID));
-                            rescheduledSaving.setName(savingObject.getString(Database.COLUMN_SAVING_NAME));
-                            rescheduledSaving.setDeadline(savingDeadline);
-                            AlarmUtil.set(context, rescheduledSaving);
-                        }
-
-                        ContentValues savingValues = new ContentValues();
-                        savingValues.put(Database.COLUMN_SAVING_ID, savingObject.getString(Database.COLUMN_SAVING_ID));
-                        savingValues.put(Database.COLUMN_SAVING_NAME, savingObject.getString(Database.COLUMN_SAVING_NAME));
-                        savingValues.put(Database.COLUMN_SAVING_CURRENT_SAVING, savingObject.getDouble(Database.COLUMN_SAVING_CURRENT_SAVING));
-                        savingValues.put(Database.COLUMN_SAVING_GOAL, savingObject.getDouble(Database.COLUMN_SAVING_GOAL));
-                        savingValues.put(Database.COLUMN_SAVING_NOTES, savingObject.optString(Database.COLUMN_SAVING_NOTES, ""));
-                        savingValues.put(Database.COLUMN_SAVING_IS_ARCHIVED, savingObject.getInt(Database.COLUMN_SAVING_IS_ARCHIVED));
-                        savingValues.put(Database.COLUMN_SAVING_DEADLINE, savingDeadline);
-                        writableDatabase.insert(Database.TABLE_SAVING, null, savingValues);
-                    }
-
-                    for (int i = 0; i < transactionJsonArray.length(); i++) {
-                        JSONObject transactionObject = transactionJsonArray.getJSONObject(i);
-                        ContentValues transactionValues = new ContentValues();
-                        transactionValues.put(Database.COLUMN_TRANSACTION_SAVING_ID, transactionObject.getString(Database.COLUMN_TRANSACTION_SAVING_ID));
-                        transactionValues.put(Database.COLUMN_TRANSACTION_AMOUNT, transactionObject.getDouble(Database.COLUMN_TRANSACTION_AMOUNT));
-                        transactionValues.put(Database.COLUMN_TRANSACTION_TYPE, transactionObject.getString(Database.COLUMN_TRANSACTION_TYPE));
-                        transactionValues.put(Database.COLUMN_TRANSACTION_DATE, transactionObject.getLong(Database.COLUMN_TRANSACTION_DATE));
-                        writableDatabase.insert(Database.TABLE_TRANSACTION, null, transactionValues);
-                    }
-
-                    writableDatabase.setTransactionSuccessful();
-                    return true;
-                } finally {
-                    writableDatabase.endTransaction();
-                }
+                savingRepo.bulkImport(savings, transactions);
+                return true;
             } catch (Exception e) {
                 Log.e(TAG_IMPORT, "Import failed", e);
                 return false;
             }
+        }
+
+        private static List<Saving> parseSavings(JSONArray array) throws JSONException {
+            List<Saving> result = new ArrayList<>(array.length());
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                Saving saving = new Saving();
+                saving.setID(obj.getString(Database.COLUMN_SAVING_ID));
+                saving.setName(obj.getString(Database.COLUMN_SAVING_NAME));
+                saving.setCurrentSaving(obj.getDouble(Database.COLUMN_SAVING_CURRENT_SAVING));
+                saving.setGoal(obj.getDouble(Database.COLUMN_SAVING_GOAL));
+                saving.setNotes(obj.optString(Database.COLUMN_SAVING_NOTES, ""));
+                saving.setIsArchived(obj.getInt(Database.COLUMN_SAVING_IS_ARCHIVED));
+                saving.setDeadline(obj.getLong(Database.COLUMN_SAVING_DEADLINE));
+                result.add(saving);
+            }
+            return result;
+        }
+
+        private static List<Transaction> parseTransactions(JSONArray array) throws JSONException {
+            List<Transaction> result = new ArrayList<>(array.length());
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject obj = array.getJSONObject(i);
+                Transaction transaction = new Transaction();
+                transaction.setSavingID(obj.getString(Database.COLUMN_TRANSACTION_SAVING_ID));
+                transaction.setAmount(obj.getDouble(Database.COLUMN_TRANSACTION_AMOUNT));
+                transaction.setType(obj.getString(Database.COLUMN_TRANSACTION_TYPE));
+                transaction.setDate(obj.getLong(Database.COLUMN_TRANSACTION_DATE));
+                result.add(transaction);
+            }
+            return result;
         }
 
         private void showProgressDialog(@StringRes int messageRes) {
