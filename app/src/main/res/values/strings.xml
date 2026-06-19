@@ -90,7 +90,7 @@
     <string name="snack_bar_permission_notifications">Deadlines requires notification permissions to work.</string>
 
     <!-- Crash reporting -->
-    <string name="developer_email" translatable="false">your_email@example.com</string>
+    <string name="developer_email" translatable="false">mowtiie.dev@gmail.com</string>
     <string name="crash_email_subject">Centsation crash report</string>
     <string name="crash_email_chooser_title">Send report via…</string>
     <string name="crash_save_toast_success">Crash report saved</string>
