@@ -36,7 +36,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.List;
 import java.util.Objects;
 
-public class MainActivity extends BaseActivity implements SavingAdapter.Listener {
+public class MainActivity extends CentsationActivity implements SavingAdapter.Listener {
 
     private ActivityMainBinding binding;
     private MainViewModel viewModel;

@@ -25,7 +25,6 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
 import com.eipna.centsation.R;
-import com.eipna.centsation.data.Contrast;
 import com.eipna.centsation.data.Currency;
 import com.eipna.centsation.data.Database;
 import com.eipna.centsation.data.Theme;
@@ -51,7 +50,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SettingsActivity extends BaseActivity {
+public class SettingsActivity extends CentsationActivity {
 
     private ActivitySettingsBinding binding;
 

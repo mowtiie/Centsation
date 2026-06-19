@@ -37,7 +37,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.Objects;
 
-public class EditActivity extends BaseActivity {
+public class EditActivity extends CentsationActivity {
 
     private ActivityEditBinding binding;
     private SavingRepository savingRepository;

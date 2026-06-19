@@ -16,7 +16,7 @@ import com.eipna.centsation.util.NotificationUtil;
 import com.eipna.centsation.util.PreferenceUtil;
 import com.google.android.material.color.DynamicColors;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class CentsationActivity extends AppCompatActivity {
 
     protected PreferenceUtil preferences;
 

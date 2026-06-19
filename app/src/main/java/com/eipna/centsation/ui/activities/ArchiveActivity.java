@@ -24,7 +24,7 @@ import com.google.android.material.shape.MaterialShapeDrawable;
 
 import java.util.List;
 
-public class ArchiveActivity extends BaseActivity implements SavingAdapter.Listener {
+public class ArchiveActivity extends CentsationActivity implements SavingAdapter.Listener {
 
     private ActivityArchiveBinding binding;
     private ArchiveViewModel viewModel;

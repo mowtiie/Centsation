@@ -5,14 +5,11 @@ import android.view.MenuItem;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.eipna.centsation.R;
 import com.eipna.centsation.data.Database;
 import com.eipna.centsation.data.transaction.Transaction;
 import com.eipna.centsation.data.transaction.TransactionRepository;
@@ -21,7 +18,7 @@ import com.eipna.centsation.ui.adapters.TransactionAdapter;
 
 import java.util.ArrayList;
 
-public class HistoryActivity extends BaseActivity {
+public class HistoryActivity extends CentsationActivity {
 
     private ActivityHistoryBinding binding;
 

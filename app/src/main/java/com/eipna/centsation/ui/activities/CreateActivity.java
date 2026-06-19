@@ -36,7 +36,7 @@ import java.util.Calendar;
 import java.util.Objects;
 import java.util.UUID;
 
-public class CreateActivity extends BaseActivity {
+public class CreateActivity extends CentsationActivity {
 
     private ActivityCreateBinding binding;
     private SavingRepository savingRepository;
