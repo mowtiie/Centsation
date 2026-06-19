@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Theme list preference -->
+    <string-array name="theme_entries">
+        <item>@string/theme_system</item>
+        <item>@string/theme_battery</item>
+        <item>@string/theme_light</item>
+        <item>@string/theme_dark</item>
+    </string-array>
+    <string-array name="theme_entry_values" translatable="false">
+        <item>System Default</item>
+        <item>Battery Saving</item>
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+
+    <!-- Contrast list preference -->
+    <string-array name="contrast_entries">
+        <item>@string/contrast_low</item>
+        <item>@string/contrast_medium</item>
+        <item>@string/contrast_high</item>
+    </string-array>
+    <string-array name="contrast_entry_values" translatable="false">
+        <item>contrast_low</item>
+        <item>contrast_medium</item>
+        <item>contrast_high</item>
+    </string-array>
+
+    <!-- Deadline format list preference -->
+    <string-array name="deadline_format_entries">
+        <item>@string/deadline_format_eeee_mmmm_dd_yyyy</item>
+        <item>@string/deadline_format_mm_dd_yyyy</item>
+        <item>@string/deadline_format_dd_mm_yyyy</item>
+        <item>@string/deadline_format_yyyy_dd_mm</item>
+        <item>@string/deadline_format_yyyy_mm_dd</item>
+    </string-array>
+    <string-array name="deadline_format_entry_values" translatable="false">
+        <item>EEEE, MMMM dd yyyy</item>
+        <item>MM/dd/yyyy</item>
+        <item>dd/MM/yyyy</item>
+        <item>yyyy/dd/MM</item>
+        <item>yyyy/MM/dd</item>
+    </string-array>
+
+</resources>

@@ -112,4 +112,22 @@
     <string name="preference_app_source_code_title">Source Code</string>
     <string name="preference_app_source_code_summary">Check the Github repository and the README</string>
     <string name="preference_app_author">Author</string>
+
+    <!-- Theme options -->
+    <string name="theme_system">System Default</string>
+    <string name="theme_battery">Battery Saving</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
+    <!-- Contrast options -->
+    <string name="contrast_low">Low</string>
+    <string name="contrast_medium">Medium</string>
+    <string name="contrast_high">High</string>
+
+    <!-- Deadline format examples -->
+    <string name="deadline_format_eeee_mmmm_dd_yyyy">Tuesday, April 8 2025</string>
+    <string name="deadline_format_mm_dd_yyyy">04/08/2025</string>
+    <string name="deadline_format_dd_mm_yyyy">08/04/2025</string>
+    <string name="deadline_format_yyyy_dd_mm">2025/08/04</string>
+    <string name="deadline_format_yyyy_mm_dd">2025/04/08</string>
 </resources>
