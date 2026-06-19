@@ -64,6 +64,8 @@
     <string name="menu_item_sort_ascending">Ascending</string>
     <string name="menu_item_sort_descending">Descending</string>
 
+    <string name="toast_export_failed">Export failed</string>
+    <string name="toast_import_failed">Import failed</string>
     <string name="toast_import_successful">Import successful</string>
     <string name="toast_export_successful">Export successful</string>
     <string name="toast_export_no_savings_found">No savings to export</string>

@@ -104,7 +104,7 @@ public class SettingsActivity extends BaseActivity {
                             exportJSON(data.getData());
                         }
                     }
-        });
+                });
 
         private final ActivityResultLauncher<Intent> importDataLauncher =
                 registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -114,7 +114,7 @@ public class SettingsActivity extends BaseActivity {
                             importJSON(data.getData());
                         }
                     }
-        });
+                });
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -193,6 +193,7 @@ public class SettingsActivity extends BaseActivity {
                 if (selectedTheme.equals(Theme.LIGHT.VALUE)) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 if (selectedTheme.equals(Theme.DARK.VALUE)) AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 preferences.setTheme(selectedTheme);
+                listTheme.setSummary(selectedTheme);
                 return true;
             });
         }
@@ -255,7 +256,7 @@ public class SettingsActivity extends BaseActivity {
                     savingObject.put(Database.COLUMN_SAVING_NAME, saving.getName());
                     savingObject.put(Database.COLUMN_SAVING_CURRENT_SAVING, saving.getCurrentSaving());
                     savingObject.put(Database.COLUMN_SAVING_GOAL, saving.getGoal());
-                    savingObject.put(Database.COLUMN_SAVING_NOTES, saving.getNotes());
+                    savingObject.put(Database.COLUMN_SAVING_NOTES, saving.getNotes() == null ? "" : saving.getNotes());
                     savingObject.put(Database.COLUMN_SAVING_IS_ARCHIVED, saving.getIsArchived());
                     savingObject.put(Database.COLUMN_SAVING_DEADLINE, saving.getDeadline());
                     savingJsonArray.put(savingObject);
@@ -284,14 +285,17 @@ public class SettingsActivity extends BaseActivity {
                 jsonExport.put(Database.TABLE_TRANSACTION, transactionJsonArray);
 
                 OutputStream outputStream = requireContext().getContentResolver().openOutputStream(uri);
-                if (outputStream != null) {
-                    outputStream.write(jsonExport.toString().getBytes());
-                    outputStream.close();
+                if (outputStream == null) {
+                    Toast.makeText(requireContext(), R.string.toast_export_failed, Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                outputStream.write(jsonExport.toString().getBytes());
+                outputStream.close();
 
                 Toast.makeText(requireContext(), R.string.toast_export_successful, Toast.LENGTH_SHORT).show();
             } catch (Exception e) {
                 Log.e("Export", "Something went wrong when exporting", e);
+                Toast.makeText(requireContext(), R.string.toast_export_failed, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -316,16 +320,18 @@ public class SettingsActivity extends BaseActivity {
 
                 try {
                     writableDatabase.beginTransaction();
+                    long now = System.currentTimeMillis();
+
                     for (int i = 0; i < savingJsonArray.length(); i++) {
                         JSONObject savingObject = savingJsonArray.getJSONObject(i);
                         ContentValues savingValues = new ContentValues();
 
                         long savingDeadline = savingObject.getLong(Database.COLUMN_SAVING_DEADLINE);
-                        if (savingDeadline != AlarmUtil.NO_ALARM) {
+                        if (savingDeadline != AlarmUtil.NO_ALARM && savingDeadline > now) {
                             Saving rescheduledSaving = new Saving();
                             rescheduledSaving.setID(savingObject.getString(Database.COLUMN_SAVING_ID));
                             rescheduledSaving.setName(savingObject.getString(Database.COLUMN_SAVING_NAME));
-                            rescheduledSaving.setDeadline(savingObject.getLong(Database.COLUMN_SAVING_DEADLINE));
+                            rescheduledSaving.setDeadline(savingDeadline);
                             AlarmUtil.set(requireContext(), rescheduledSaving);
                         }
 
@@ -333,9 +339,9 @@ public class SettingsActivity extends BaseActivity {
                         savingValues.put(Database.COLUMN_SAVING_NAME, savingObject.getString(Database.COLUMN_SAVING_NAME));
                         savingValues.put(Database.COLUMN_SAVING_CURRENT_SAVING, savingObject.getDouble(Database.COLUMN_SAVING_CURRENT_SAVING));
                         savingValues.put(Database.COLUMN_SAVING_GOAL, savingObject.getDouble(Database.COLUMN_SAVING_GOAL));
-                        savingValues.put(Database.COLUMN_SAVING_NOTES, savingObject.getString(Database.COLUMN_SAVING_NOTES));
+                        savingValues.put(Database.COLUMN_SAVING_NOTES, savingObject.optString(Database.COLUMN_SAVING_NOTES, ""));
                         savingValues.put(Database.COLUMN_SAVING_IS_ARCHIVED, savingObject.getInt(Database.COLUMN_SAVING_IS_ARCHIVED));
-                        savingValues.put(Database.COLUMN_SAVING_DEADLINE, savingObject.getLong(Database.COLUMN_SAVING_DEADLINE));
+                        savingValues.put(Database.COLUMN_SAVING_DEADLINE, savingDeadline);
                         writableDatabase.insert(Database.TABLE_SAVING, null, savingValues);
                     }
 
@@ -354,11 +360,13 @@ public class SettingsActivity extends BaseActivity {
                     Toast.makeText(requireContext(), R.string.toast_import_successful, Toast.LENGTH_SHORT).show();
                 } catch (Exception e) {
                     Log.e("Import", "Something went wrong while importing savings or transactions", e);
+                    Toast.makeText(requireContext(), R.string.toast_import_failed, Toast.LENGTH_SHORT).show();
                 } finally {
                     writableDatabase.endTransaction();
                 }
             } catch (Exception e) {
                 Log.e("Import", "Something went wrong while importing", e);
+                Toast.makeText(requireContext(), R.string.toast_import_failed, Toast.LENGTH_SHORT).show();
             }
         }
     }
