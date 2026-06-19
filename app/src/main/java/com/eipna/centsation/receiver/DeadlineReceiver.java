@@ -1,6 +1,5 @@
 package com.eipna.centsation.receiver;
 
-import android.app.AlarmManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,10 +13,12 @@ import com.eipna.centsation.util.NotificationUtil;
 import java.util.ArrayList;
 
 public class DeadlineReceiver extends BroadcastReceiver {
+
+    private static final String TAG = "DeadlineReceiver";
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()) ||
-                AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED.equals(intent.getAction())) {
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             rescheduleDeadlines(context);
         } else {
             NotificationUtil.create(context, intent);
@@ -27,13 +28,15 @@ public class DeadlineReceiver extends BroadcastReceiver {
     private void rescheduleDeadlines(Context context) {
         try (SavingRepository savingRepository = new SavingRepository(context)) {
             ArrayList<Saving> savings = new ArrayList<>(savingRepository.getAllSavings());
+            long now = System.currentTimeMillis();
             for (Saving saving : savings) {
-                if (saving.getDeadline() != AlarmUtil.NO_ALARM) {
+                if (saving.getDeadline() != AlarmUtil.NO_ALARM
+                        && saving.getDeadline() > now) {
                     AlarmUtil.set(context, saving);
                 }
             }
         } catch (Exception e) {
-            Log.e("Reschedule Alarm", "Error while rescheduling some deadlines", e);
+            Log.e(TAG, "Error while rescheduling deadlines", e);
         }
     }
 }
