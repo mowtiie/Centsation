@@ -15,7 +15,7 @@ import com.mowtiie.centsation.ui.activities.MainActivity;
 
 import java.util.Objects;
 
-public class NotificationUtil {
+public class NotificationHandler {
 
     public static String CHANNEL_DEADLINE_ID = "channel_deadline";
     public static String CHANNEL_DEADLINE_NAME = "Deadlines";

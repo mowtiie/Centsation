@@ -8,7 +8,7 @@ import android.util.Log;
 import com.mowtiie.centsation.data.saving.Saving;
 import com.mowtiie.centsation.data.saving.SavingRepository;
 import com.mowtiie.centsation.util.AlarmSetter;
-import com.mowtiie.centsation.util.NotificationUtil;
+import com.mowtiie.centsation.util.NotificationHandler;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,7 @@ public class DeadlineReceiver extends BroadcastReceiver {
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
             rescheduleDeadlines(context);
         } else {
-            NotificationUtil.create(context, intent);
+            NotificationHandler.create(context, intent);
         }
     }
 

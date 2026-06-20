@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.mowtiie.centsation.R;
 import com.mowtiie.centsation.data.Contrast;
 import com.mowtiie.centsation.data.Theme;
-import com.mowtiie.centsation.util.NotificationUtil;
+import com.mowtiie.centsation.util.NotificationHandler;
 import com.mowtiie.centsation.util.PreferenceUtil;
 import com.google.android.material.color.DynamicColors;
 
@@ -32,7 +32,7 @@ public abstract class CentsationActivity extends AppCompatActivity {
             );
         }
 
-        NotificationUtil.createChannels(this);
+        NotificationHandler.createChannels(this);
 
         String theme = preferences.getTheme();
         if (theme.equals(Theme.SYSTEM.VALUE)) {
