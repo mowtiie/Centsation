@@ -1,42 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:paddingEnd="24dp"
-    android:paddingStart="24dp"
-    android:paddingTop="16dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/field_saving_amount_layout"
-        android:hint="@string/field_transaction_amount"
+    <LinearLayout
+        android:orientation="vertical"
+        android:paddingEnd="24dp"
+        android:paddingStart="24dp"
+        android:paddingTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/field_saving_amount_text"
-            android:inputType="numberDecimal"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/field_saving_amount_layout"
+            android:hint="@string/field_transaction_amount"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content">
 
-    <RadioGroup
-        android:layout_marginTop="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/field_saving_amount_text"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/radio_button_deposit"
-            android:text="@string/radio_button_deposit"
-            android:checked="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+        <RadioGroup
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/radio_button_withdraw"
-            android:text="@string/radio_button_withdraw"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </RadioGroup>
-</LinearLayout>
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/radio_button_deposit"
+                android:text="@string/radio_button_deposit"
+                android:checked="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/radio_button_withdraw"
+                android:text="@string/radio_button_withdraw"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </RadioGroup>
+    </LinearLayout>
+</ScrollView>
