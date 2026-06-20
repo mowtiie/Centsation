@@ -197,11 +197,13 @@ public class MainActivity extends CentsationActivity implements SavingAdapter.Li
     @Override
     public void onOperationClick(SavingOperation operation, int position) {
         Saving selectedSaving = savingAdapter.getSavingAt(position);
-        if (operation.equals(SavingOperation.DELETE)) showDeleteDialog(selectedSaving);
-        if (operation.equals(SavingOperation.SHARE)) showShareIntent(selectedSaving.getNotes());
-        if (operation.equals(SavingOperation.TRANSACTION)) showTransactionDialog(selectedSaving);
-        if (operation.equals(SavingOperation.ARCHIVE)) viewModel.archiveSaving(selectedSaving);
-        if (operation.equals(SavingOperation.HISTORY)) showHistoryActivity(selectedSaving);
+        switch (operation) {
+            case DELETE:      showDeleteDialog(selectedSaving); break;
+            case SHARE:       showShareIntent(selectedSaving.getNotes()); break;
+            case TRANSACTION: showTransactionDialog(selectedSaving); break;
+            case ARCHIVE:     viewModel.archiveSaving(selectedSaving); break;
+            case HISTORY:     showHistoryActivity(selectedSaving); break;
+        }
     }
 
     private void showDeleteDialog(Saving saving) {
