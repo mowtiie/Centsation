@@ -8,30 +8,22 @@ import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.mowtiie.centsation.data.Database;
 import com.mowtiie.centsation.data.transaction.Transaction;
-import com.mowtiie.centsation.data.transaction.TransactionRepository;
 import com.mowtiie.centsation.databinding.ActivityHistoryBinding;
 import com.mowtiie.centsation.ui.adapters.TransactionAdapter;
+import com.mowtiie.centsation.ui.viewmodel.HistoryViewModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class HistoryActivity extends CentsationActivity {
 
     private ActivityHistoryBinding binding;
-
+    private HistoryViewModel viewModel;
     private TransactionAdapter transactionAdapter;
-    private TransactionRepository transactionRepository;
-
-    private String selectedSavingID;
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        binding = null;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +42,32 @@ public class HistoryActivity extends CentsationActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        selectedSavingID = getIntent().getStringExtra(Database.COLUMN_SAVING_ID);
-        transactionRepository = new TransactionRepository(this);
+        String selectedSavingID = getIntent().getStringExtra(Database.COLUMN_SAVING_ID);
 
-        ArrayList<Transaction> transactions = transactionRepository.get(selectedSavingID);
-        transactionAdapter = new TransactionAdapter(this, transactions);
+        viewModel = new ViewModelProvider(this).get(HistoryViewModel.class);
+        viewModel.setSavingID(selectedSavingID);
 
+        transactionAdapter = new TransactionAdapter(this);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerView.setAdapter(transactionAdapter);
+
+        viewModel.getTransactions().observe(this, this::onTransactionsChanged);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        viewModel.loadTransactions();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
+    }
+
+    private void onTransactionsChanged(List<Transaction> updated) {
+        transactionAdapter.submitList(updated);
     }
 
     @Override
