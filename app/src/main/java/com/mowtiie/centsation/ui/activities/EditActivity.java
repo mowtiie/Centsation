@@ -74,7 +74,7 @@ public class EditActivity extends CentsationActivity {
         savingRepository = new SavingRepository(this);
         currentSaving = savingRepository.getSaving(savingIDExtra);
 
-        String selectedCurrencySymbol = Currency.getSymbol(preferences.getCurrency());
+        String selectedCurrencySymbol = Currency.getSymbol(preferenceUtil.getCurrency());
         binding.fieldSavingGoalLayout.setPrefixText(selectedCurrencySymbol);
 
         binding.fieldSavingNameText.setText(currentSaving.getName());
@@ -83,7 +83,7 @@ public class EditActivity extends CentsationActivity {
         binding.fieldSavingDeadlineLayout.setEndIconVisible(false);
 
         if (currentSaving.getDeadline() != AlarmSetter.NO_ALARM) {
-            String deadlineFormat = preferences.getDeadlineFormat();
+            String deadlineFormat = preferenceUtil.getDeadlineFormat();
             binding.fieldSavingDeadlineLayout.setEndIconVisible(true);
             binding.fieldSavingDeadlineText.setText(DateParser.getStringDate(currentSaving.getDeadline(), deadlineFormat));
         }
@@ -132,7 +132,7 @@ public class EditActivity extends CentsationActivity {
             calendar.set(Calendar.MILLISECOND, 0);
 
             currentSaving.setDeadline(calendar.getTimeInMillis());
-            String deadlineFormat = preferences.getDeadlineFormat();
+            String deadlineFormat = preferenceUtil.getDeadlineFormat();
 
             binding.fieldSavingDeadlineText.setText(DateParser.getStringDate(selection, deadlineFormat));
             binding.fieldSavingDeadlineLayout.setEndIconVisible(true);

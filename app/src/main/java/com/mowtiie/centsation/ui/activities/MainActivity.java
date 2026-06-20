@@ -225,7 +225,7 @@ public class MainActivity extends CentsationActivity implements SavingAdapter.Li
 
     private void showTransactionDialog(Saving selectedSaving) {
         View transactionDialogView = LayoutInflater.from(this).inflate(R.layout.dialog_saving_transaction, null, false);
-        String currentCurrencySymbol = Currency.getSymbol(preferences.getCurrency());
+        String currentCurrencySymbol = Currency.getSymbol(preferenceUtil.getCurrency());
 
         TextInputLayout amountLayout = transactionDialogView.findViewById(R.id.field_saving_amount_layout);
         TextInputEditText amountInput = transactionDialogView.findViewById(R.id.field_saving_amount_text);

@@ -18,14 +18,14 @@ import com.google.android.material.color.DynamicColors;
 
 public abstract class CentsationActivity extends AppCompatActivity {
 
-    protected PreferenceUtil preferences;
+    protected PreferenceUtil preferenceUtil;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        preferences = new PreferenceUtil(this);
+        preferenceUtil = new PreferenceUtil(this);
         super.onCreate(savedInstanceState);
 
-        if (preferences.isScreenPrivacyEnabled()) {
+        if (preferenceUtil.isScreenPrivacyEnabled()) {
             getWindow().setFlags(
                     WindowManager.LayoutParams.FLAG_SECURE,
                     WindowManager.LayoutParams.FLAG_SECURE
@@ -34,7 +34,7 @@ public abstract class CentsationActivity extends AppCompatActivity {
 
         NotificationHandler.createChannels(this);
 
-        String theme = preferences.getTheme();
+        String theme = preferenceUtil.getTheme();
         if (theme.equals(Theme.SYSTEM.VALUE)) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
         } else if (theme.equals(Theme.BATTERY.VALUE)) {
@@ -45,7 +45,7 @@ public abstract class CentsationActivity extends AppCompatActivity {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }
 
-        String contrast = preferences.getContrast();
+        String contrast = preferenceUtil.getContrast();
         if (contrast.equals(Contrast.LOW.VALUE)) {
             setTheme(R.style.Theme_Centsation);
         } else if (contrast.equals(Contrast.MEDIUM.VALUE)) {
@@ -54,7 +54,7 @@ public abstract class CentsationActivity extends AppCompatActivity {
             setTheme(R.style.Theme_Centsation_HighContrast);
         }
 
-        if (preferences.isDynamicColors()) DynamicColors.applyToActivityIfAvailable(this);
+        if (preferenceUtil.isDynamicColors()) DynamicColors.applyToActivityIfAvailable(this);
     }
 
     @Override

@@ -72,7 +72,7 @@ public class CreateActivity extends CentsationActivity {
         savingRepository = new SavingRepository(this);
         selectedDeadline = AlarmSetter.NO_ALARM;
 
-        selectedCurrencySymbol = Currency.getSymbol(preferences.getCurrency());
+        selectedCurrencySymbol = Currency.getSymbol(preferenceUtil.getCurrency());
         binding.fieldSavingCurrentSavingLayout.setPrefixText(selectedCurrencySymbol);
         binding.fieldSavingGoalLayout.setPrefixText(selectedCurrencySymbol);
 
@@ -174,7 +174,7 @@ public class CreateActivity extends CentsationActivity {
             calendar.set(Calendar.MILLISECOND, 0);
 
             selectedDeadline = calendar.getTimeInMillis();
-            String deadlineFormat = preferences.getDeadlineFormat();
+            String deadlineFormat = preferenceUtil.getDeadlineFormat();
 
             binding.fieldSavingDeadlineText.setText(DateParser.getStringDate(selection, deadlineFormat));
             binding.fieldSavingDeadlineLayout.setEndIconVisible(true);
