@@ -92,13 +92,7 @@ public class MainActivity extends CentsationActivity implements SavingAdapter.Li
 
         viewModel.getSavings().observe(this, this::onSavingsChanged);
 
-        // binding.createSaving.setOnClickListener(v -> startActivity(new Intent(this, CreateActivity.class)));
-        binding.createSaving.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                throw new RuntimeException("SICC MANN");
-            }
-        });
+        binding.createSaving.setOnClickListener(v -> startActivity(new Intent(this, CreateActivity.class)));
 
         if (savedInstanceState == null) {
             CrashReporter.showDialogIfPending(this, saveCrashLauncher);
