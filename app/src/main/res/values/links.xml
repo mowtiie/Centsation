@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="developer_email" translatable="false">mowtiie.dev@gmail.com</string>
+
+    <string name="url_source_code">https://github.com/mowtiie/Centsation</string>
+    <string name="url_author">https://github.com/mowtiie</string>
+    <string name="url_support">https://ko-fi.com/mowtiie</string>
+
+</resources>

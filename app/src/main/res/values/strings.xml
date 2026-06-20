@@ -12,9 +12,6 @@
     <string name="toolbar_history">History</string>
     <string name="toolbar_about">About</string>
 
-    <string name="link_app_source_code">https://github.com/mowtiie/Centsation</string>
-    <string name="link_app_author">https://github.com/mowtiie</string>
-
     <string name="empty_indicator_main">No savings found</string>
     <string name="empty_indicator_archive">No archived savings</string>
 
@@ -90,7 +87,6 @@
     <string name="snack_bar_permission_notifications">Deadlines requires notification permissions to work.</string>
 
     <!-- Crash reporting -->
-    <string name="developer_email" translatable="false">mowtiie.dev@gmail.com</string>
     <string name="crash_email_subject">Centsation crash report</string>
     <string name="crash_email_chooser_title">Send report via…</string>
     <string name="crash_save_toast_success">Crash report saved</string>
@@ -122,6 +118,8 @@
     <string name="preference_export_summary">Export your savings</string>
 
     <!--About Preference Category -->
+    <string name="preference_support_title">Support the developer</string>
+    <string name="preference_support_summary">If you enjoy using Centsation, you can support its development</string>
     <string name="preference_category_about">About</string>
     <string name="preference_app_version">Version</string>
     <string name="preference_app_license">License</string>
