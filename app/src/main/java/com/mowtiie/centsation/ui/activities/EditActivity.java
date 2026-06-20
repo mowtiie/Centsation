@@ -27,7 +27,7 @@ import com.mowtiie.centsation.data.saving.Saving;
 import com.mowtiie.centsation.data.saving.SavingRepository;
 import com.mowtiie.centsation.databinding.ActivityEditBinding;
 import com.mowtiie.centsation.util.AlarmUtil;
-import com.mowtiie.centsation.util.DateUtil;
+import com.mowtiie.centsation.util.DateParser;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -85,7 +85,7 @@ public class EditActivity extends CentsationActivity {
         if (currentSaving.getDeadline() != AlarmUtil.NO_ALARM) {
             String deadlineFormat = preferences.getDeadlineFormat();
             binding.fieldSavingDeadlineLayout.setEndIconVisible(true);
-            binding.fieldSavingDeadlineText.setText(DateUtil.getStringDate(currentSaving.getDeadline(), deadlineFormat));
+            binding.fieldSavingDeadlineText.setText(DateParser.getStringDate(currentSaving.getDeadline(), deadlineFormat));
         }
 
         binding.fieldSavingDeadlineText.setOnClickListener(v -> hasNotificationPermission());
@@ -134,7 +134,7 @@ public class EditActivity extends CentsationActivity {
             currentSaving.setDeadline(calendar.getTimeInMillis());
             String deadlineFormat = preferences.getDeadlineFormat();
 
-            binding.fieldSavingDeadlineText.setText(DateUtil.getStringDate(selection, deadlineFormat));
+            binding.fieldSavingDeadlineText.setText(DateParser.getStringDate(selection, deadlineFormat));
             binding.fieldSavingDeadlineLayout.setEndIconVisible(true);
         });
         datePicker.show(getSupportFragmentManager(), null);

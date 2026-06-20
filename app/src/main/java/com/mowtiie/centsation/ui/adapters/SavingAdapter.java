@@ -20,7 +20,7 @@ import com.mowtiie.centsation.data.Currency;
 import com.mowtiie.centsation.data.saving.Saving;
 import com.mowtiie.centsation.data.saving.SavingOperation;
 import com.mowtiie.centsation.util.AlarmUtil;
-import com.mowtiie.centsation.util.DateUtil;
+import com.mowtiie.centsation.util.DateParser;
 import com.mowtiie.centsation.util.PreferenceUtil;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -161,7 +161,7 @@ public class SavingAdapter extends ListAdapter<Saving, SavingAdapter.ViewHolder>
             share.setVisibility((notes == null || notes.isEmpty()) ? View.GONE : View.VISIBLE);
 
             deadline.setVisibility(currentSaving.getDeadline() == AlarmUtil.NO_ALARM ? View.GONE : View.VISIBLE);
-            deadline.setText(String.format("Deadline: %s", DateUtil.getStringDate(currentSaving.getDeadline(), deadlineFormat)));
+            deadline.setText(String.format("Deadline: %s", DateParser.getStringDate(currentSaving.getDeadline(), deadlineFormat)));
 
             percent.setText(String.format("(%s%c)", percentValue, '%'));
             parent.setChecked(currentSaving.getCurrentSaving() >= currentSaving.getGoal());

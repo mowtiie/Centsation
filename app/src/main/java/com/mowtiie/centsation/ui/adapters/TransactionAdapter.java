@@ -17,7 +17,7 @@ import com.mowtiie.centsation.R;
 import com.mowtiie.centsation.data.Currency;
 import com.mowtiie.centsation.data.transaction.Transaction;
 import com.mowtiie.centsation.data.transaction.TransactionType;
-import com.mowtiie.centsation.util.DateUtil;
+import com.mowtiie.centsation.util.DateParser;
 import com.mowtiie.centsation.util.PreferenceUtil;
 
 import java.util.Objects;
@@ -82,7 +82,7 @@ public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdap
             int withdrawCardColor = context.getResources().getColor(R.color.md_theme_tertiaryContainer, itemView.getContext().getTheme());
             int withdrawTextColor = context.getResources().getColor(R.color.md_theme_onTertiaryContainer, itemView.getContext().getTheme());
 
-            date.setText(DateUtil.getStringDate(currentTransaction.getDate()));
+            date.setText(DateParser.getStringDate(currentTransaction.getDate()));
 
             if (currentTransaction.getType().equals(TransactionType.DEPOSIT.VALUE) || currentTransaction.getType().equals(TransactionType.CREATED.VALUE)) {
                 parent.setCardBackgroundColor(depositCardColor);

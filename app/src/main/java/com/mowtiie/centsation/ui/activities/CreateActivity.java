@@ -26,7 +26,7 @@ import com.mowtiie.centsation.data.saving.Saving;
 import com.mowtiie.centsation.data.saving.SavingRepository;
 import com.mowtiie.centsation.databinding.ActivityCreateBinding;
 import com.mowtiie.centsation.util.AlarmUtil;
-import com.mowtiie.centsation.util.DateUtil;
+import com.mowtiie.centsation.util.DateParser;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
@@ -176,7 +176,7 @@ public class CreateActivity extends CentsationActivity {
             selectedDeadline = calendar.getTimeInMillis();
             String deadlineFormat = preferences.getDeadlineFormat();
 
-            binding.fieldSavingDeadlineText.setText(DateUtil.getStringDate(selection, deadlineFormat));
+            binding.fieldSavingDeadlineText.setText(DateParser.getStringDate(selection, deadlineFormat));
             binding.fieldSavingDeadlineLayout.setEndIconVisible(true);
         });
         datePicker.show(getSupportFragmentManager(), null);
