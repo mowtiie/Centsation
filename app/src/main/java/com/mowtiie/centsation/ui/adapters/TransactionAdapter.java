@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.card.MaterialCardView;
 import com.mowtiie.centsation.R;
 import com.mowtiie.centsation.data.Currency;
 import com.mowtiie.centsation.data.transaction.Transaction;
@@ -51,11 +52,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        MaterialTextView type, amount, date;
+        MaterialCardView parent;
+        MaterialTextView amount, date;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            type = itemView.findViewById(R.id.transaction_type);
+            parent = itemView.findViewById(R.id.transaction_parent);
             amount = itemView.findViewById(R.id.transaction_amount);
             date = itemView.findViewById(R.id.transaction_date);
         }
@@ -63,14 +65,21 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         public void bind(Transaction currentTransaction, PreferenceUtil preferenceUtil, Context context) {
             String selectedCurrencySymbol = Currency.getSymbol(preferenceUtil.getCurrency());
 
-            type.setText(currentTransaction.getType());
+            int depositCardColor = context.getResources().getColor(R.color.md_theme_primaryContainer, itemView.getContext().getTheme());
+            int depositTextColor = context.getResources().getColor(R.color.md_theme_onPrimaryContainer, itemView.getContext().getTheme());
+
+            int withdrawCardColor = context.getResources().getColor(R.color.md_theme_tertiaryContainer, itemView.getContext().getTheme());
+            int withdrawTextColor = context.getResources().getColor(R.color.md_theme_onTertiaryContainer, itemView.getContext().getTheme());
+
             date.setText(DateUtil.getStringDate(currentTransaction.getDate()));
 
             if (currentTransaction.getType().equals(TransactionType.DEPOSIT.VALUE) || currentTransaction.getType().equals(TransactionType.CREATED.VALUE)) {
-                amount.setTextColor(context.getResources().getColor(R.color.md_theme_secondary, itemView.getContext().getTheme()));
+                parent.setCardBackgroundColor(depositCardColor);
+                amount.setTextColor(depositTextColor);
                 amount.setText(String.format("%c%s%s", '+', selectedCurrencySymbol, NumberFormat.getInstance().format(currentTransaction.getAmount())));
             } else if (currentTransaction.getType().equals(TransactionType.WITHDRAW.VALUE)) {
-                amount.setTextColor(context.getResources().getColor(R.color.md_theme_error, itemView.getContext().getTheme()));
+                parent.setCardBackgroundColor(withdrawCardColor);
+                amount.setTextColor(withdrawTextColor);
                 amount.setText(String.format("%c%s%s", '-', selectedCurrencySymbol, NumberFormat.getInstance().format(currentTransaction.getAmount())));
             }
         }
