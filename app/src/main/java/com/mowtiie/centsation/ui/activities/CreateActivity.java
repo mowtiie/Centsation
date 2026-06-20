@@ -25,7 +25,7 @@ import com.mowtiie.centsation.data.Currency;
 import com.mowtiie.centsation.data.saving.Saving;
 import com.mowtiie.centsation.data.saving.SavingRepository;
 import com.mowtiie.centsation.databinding.ActivityCreateBinding;
-import com.mowtiie.centsation.util.AlarmUtil;
+import com.mowtiie.centsation.util.AlarmSetter;
 import com.mowtiie.centsation.util.DateParser;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
@@ -70,7 +70,7 @@ public class CreateActivity extends CentsationActivity {
         }
 
         savingRepository = new SavingRepository(this);
-        selectedDeadline = AlarmUtil.NO_ALARM;
+        selectedDeadline = AlarmSetter.NO_ALARM;
 
         selectedCurrencySymbol = Currency.getSymbol(preferences.getCurrency());
         binding.fieldSavingCurrentSavingLayout.setPrefixText(selectedCurrencySymbol);
@@ -129,7 +129,7 @@ public class CreateActivity extends CentsationActivity {
         createdSaving.setDeadline(selectedDeadline);
 
         if (!deadlineText.isEmpty()) {
-            AlarmUtil.set(this, createdSaving);
+            AlarmSetter.set(this, createdSaving);
         }
 
         savingRepository.create(createdSaving);

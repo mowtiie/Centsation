@@ -12,7 +12,7 @@ import com.mowtiie.centsation.data.Database;
 import com.mowtiie.centsation.data.transaction.Transaction;
 import com.mowtiie.centsation.data.transaction.TransactionRepository;
 import com.mowtiie.centsation.data.transaction.TransactionType;
-import com.mowtiie.centsation.util.AlarmUtil;
+import com.mowtiie.centsation.util.AlarmSetter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -191,8 +191,8 @@ public class SavingRepository extends Database {
         long now = System.currentTimeMillis();
         for (Saving saving : savings) {
             long deadline = saving.getDeadline();
-            if (deadline != AlarmUtil.NO_ALARM && deadline > now) {
-                AlarmUtil.set(context, saving);
+            if (deadline != AlarmSetter.NO_ALARM && deadline > now) {
+                AlarmSetter.set(context, saving);
             }
         }
     }

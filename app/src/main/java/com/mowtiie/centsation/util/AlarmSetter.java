@@ -9,7 +9,7 @@ import com.mowtiie.centsation.data.Database;
 import com.mowtiie.centsation.data.saving.Saving;
 import com.mowtiie.centsation.receiver.DeadlineReceiver;
 
-public class AlarmUtil {
+public class AlarmSetter {
 
     public static final int NO_ALARM = 0;
 

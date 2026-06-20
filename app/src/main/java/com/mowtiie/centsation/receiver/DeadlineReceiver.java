@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.mowtiie.centsation.data.saving.Saving;
 import com.mowtiie.centsation.data.saving.SavingRepository;
-import com.mowtiie.centsation.util.AlarmUtil;
+import com.mowtiie.centsation.util.AlarmSetter;
 import com.mowtiie.centsation.util.NotificationUtil;
 
 import java.util.ArrayList;
@@ -30,9 +30,9 @@ public class DeadlineReceiver extends BroadcastReceiver {
             ArrayList<Saving> savings = new ArrayList<>(savingRepository.getSavings(Saving.NOT_ARCHIVE));
             long now = System.currentTimeMillis();
             for (Saving saving : savings) {
-                if (saving.getDeadline() != AlarmUtil.NO_ALARM
+                if (saving.getDeadline() != AlarmSetter.NO_ALARM
                         && saving.getDeadline() > now) {
-                    AlarmUtil.set(context, saving);
+                    AlarmSetter.set(context, saving);
                 }
             }
         } catch (Exception e) {

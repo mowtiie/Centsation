@@ -26,7 +26,7 @@ import com.mowtiie.centsation.data.Database;
 import com.mowtiie.centsation.data.saving.Saving;
 import com.mowtiie.centsation.data.saving.SavingRepository;
 import com.mowtiie.centsation.databinding.ActivityEditBinding;
-import com.mowtiie.centsation.util.AlarmUtil;
+import com.mowtiie.centsation.util.AlarmSetter;
 import com.mowtiie.centsation.util.DateParser;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
@@ -82,7 +82,7 @@ public class EditActivity extends CentsationActivity {
         binding.fieldSavingNotesText.setText(currentSaving.getNotes());
         binding.fieldSavingDeadlineLayout.setEndIconVisible(false);
 
-        if (currentSaving.getDeadline() != AlarmUtil.NO_ALARM) {
+        if (currentSaving.getDeadline() != AlarmSetter.NO_ALARM) {
             String deadlineFormat = preferences.getDeadlineFormat();
             binding.fieldSavingDeadlineLayout.setEndIconVisible(true);
             binding.fieldSavingDeadlineText.setText(DateParser.getStringDate(currentSaving.getDeadline(), deadlineFormat));
@@ -177,10 +177,10 @@ public class EditActivity extends CentsationActivity {
         editedSaving.setDeadline(currentSaving.getDeadline());
 
         if (deadlineText.isEmpty()) {
-            AlarmUtil.cancel(this, editedSaving);
-            editedSaving.setDeadline(AlarmUtil.NO_ALARM);
+            AlarmSetter.cancel(this, editedSaving);
+            editedSaving.setDeadline(AlarmSetter.NO_ALARM);
         } else {
-            AlarmUtil.set(this, editedSaving);
+            AlarmSetter.set(this, editedSaving);
         }
 
         savingRepository.edit(editedSaving);

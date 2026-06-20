@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.mowtiie.centsation.data.saving.Saving;
 import com.mowtiie.centsation.data.saving.SavingRepository;
-import com.mowtiie.centsation.util.AlarmUtil;
+import com.mowtiie.centsation.util.AlarmSetter;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -40,7 +40,7 @@ public class ArchiveViewModel extends AndroidViewModel {
 
     public void deleteSaving(Saving saving) {
         executor.execute(() -> {
-            AlarmUtil.cancel(getApplication(), saving);
+            AlarmSetter.cancel(getApplication(), saving);
             savingRepository.delete(saving.getID());
             loadSavingsBlocking();
         });

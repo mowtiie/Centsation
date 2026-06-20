@@ -11,7 +11,7 @@ import com.mowtiie.centsation.data.saving.Saving;
 import com.mowtiie.centsation.data.saving.SavingRepository;
 import com.mowtiie.centsation.data.saving.SavingSort;
 import com.mowtiie.centsation.data.transaction.TransactionType;
-import com.mowtiie.centsation.util.AlarmUtil;
+import com.mowtiie.centsation.util.AlarmSetter;
 import com.mowtiie.centsation.util.PreferenceUtil;
 
 import java.util.ArrayList;
@@ -103,7 +103,7 @@ public class MainViewModel extends AndroidViewModel {
 
     public void deleteSaving(Saving saving) {
         executor.execute(() -> {
-            AlarmUtil.cancel(getApplication(), saving);
+            AlarmSetter.cancel(getApplication(), saving);
             savingRepository.delete(saving.getID());
             loadSavingsBlocking();
         });
