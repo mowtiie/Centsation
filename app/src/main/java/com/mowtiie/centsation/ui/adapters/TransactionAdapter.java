@@ -7,47 +7,58 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.textview.MaterialTextView;
 import com.mowtiie.centsation.R;
 import com.mowtiie.centsation.data.Currency;
 import com.mowtiie.centsation.data.transaction.Transaction;
 import com.mowtiie.centsation.data.transaction.TransactionType;
 import com.mowtiie.centsation.util.DateUtil;
 import com.mowtiie.centsation.util.PreferenceUtil;
-import com.google.android.material.textview.MaterialTextView;
 
-import java.util.ArrayList;
+import java.util.Objects;
 
-public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.ViewHolder> {
+public class TransactionAdapter extends ListAdapter<Transaction, TransactionAdapter.ViewHolder> {
+
+    private static final DiffUtil.ItemCallback<Transaction> DIFF_CALLBACK =
+            new DiffUtil.ItemCallback<Transaction>() {
+                @Override
+                public boolean areItemsTheSame(@NonNull Transaction oldItem, @NonNull Transaction newItem) {
+                    return oldItem.getID() == newItem.getID();
+                }
+
+                @Override
+                public boolean areContentsTheSame(@NonNull Transaction oldItem, @NonNull Transaction newItem) {
+                    return oldItem.getAmount() == newItem.getAmount()
+                            && oldItem.getDate() == newItem.getDate()
+                            && Objects.equals(oldItem.getType(), newItem.getType());
+                }
+            };
 
     private final Context context;
     private final PreferenceUtil preferenceUtil;
-    private final ArrayList<Transaction> transactions;
 
-    public TransactionAdapter(Context context, ArrayList<Transaction> transactions) {
+    public TransactionAdapter(Context context) {
+        super(DIFF_CALLBACK);
         this.context = context;
-        this.transactions = transactions;
         this.preferenceUtil = new PreferenceUtil(context);
     }
 
     @NonNull
     @Override
     public TransactionAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View transactionView = LayoutInflater.from(context).inflate(R.layout.recycler_transaction, parent, false);
+        View transactionView = LayoutInflater.from(context)
+                .inflate(R.layout.recycler_transaction, parent, false);
         return new ViewHolder(transactionView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TransactionAdapter.ViewHolder holder, int position) {
-        Transaction currentTransaction = transactions.get(position);
-        holder.bind(currentTransaction, preferenceUtil, context);
-    }
-
-    @Override
-    public int getItemCount() {
-        return transactions.size();
+        holder.bind(getItem(position), preferenceUtil, context);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
