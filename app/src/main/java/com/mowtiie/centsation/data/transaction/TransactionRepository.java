@@ -30,7 +30,7 @@ public class TransactionRepository extends Database {
     public ArrayList<Transaction> get(String savingID) {
         ArrayList<Transaction> list = new ArrayList<>();
         SQLiteDatabase database = getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE_TRANSACTION + " WHERE " + COLUMN_TRANSACTION_SAVING_ID + " = ?";
+        String query = "SELECT * FROM " + TABLE_TRANSACTION + " WHERE " + COLUMN_TRANSACTION_SAVING_ID + " = ?" + " ORDER BY " + COLUMN_TRANSACTION_DATE + " DESC";
         Cursor cursor = database.rawQuery(query, new String[]{savingID});
 
         if (cursor.moveToFirst()) {
