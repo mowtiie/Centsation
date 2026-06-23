@@ -41,7 +41,7 @@ Centsation is also available on IzzyOnDroid.
 
 [<img height=80 alt="Get it on IzzyOnDroid"
 src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png"
-/>](https://apt.izzysoft.de/fdroid/index/apk/com.mowtiie.centsation)
+/>](https://apt.izzysoft.de/fdroid/index/apk/com.eipna.centsation)
 
 ## Verification
 
